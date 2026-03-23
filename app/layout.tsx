@@ -27,7 +27,43 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-black text-zinc-100">
+        <header className="fixed inset-x-0 top-0 z-20 border-b border-white/10 bg-zinc-950/85 backdrop-blur-sm">
+          <div className="flex h-20 w-full items-center px-3 md:px-5">
+            <div className="flex items-center">
+              <a
+                href="#"
+                className="shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white"
+              >
+                ERIC LIN
+              </a>
+
+              <span className="mx-5 hidden h-6 w-px bg-white/25 lg:block" />
+
+              <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-300 lg:flex">
+                <a href="#" className="px-5 transition-colors hover:text-white">
+                  About
+                </a>
+
+                <span className="h-4 w-px bg-white/20" />
+                <a href="#" className="px-5 transition-colors hover:text-white">
+                  My Goal
+                </a>
+              </nav>
+            </div>
+
+            <span className="mx-5 hidden h-6 w-px bg-white/25 md:block" />
+
+            <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
+              <button type="button" className="hidden text-red-500 md:block">
+                Night Mode [+]
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {children}
+      </body>
     </html>
   );
 }
