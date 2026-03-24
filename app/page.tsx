@@ -26,8 +26,6 @@ gsap.registerPlugin(
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-black text-zinc-100">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.13),transparent_42%)]" />
-
       <main className="relative flex min-h-screen items-end">
         <h1 className="m-0 px-3 pb-8 text-[clamp(4.25rem,18vw,14rem)] font-black uppercase leading-[0.8] tracking-[0.04em] text-white md:px-5 md:pb-12">
           ERIC LIN
