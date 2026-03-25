@@ -58,6 +58,16 @@ export default function RootLayout({
               <button type="button" className="hidden text-red-500 md:block">
                 Night Mode [+]
               </button>
+
+              <button
+                type="button"
+                className="hidden items-center gap-2 border border-zinc-700 bg-zinc-800 px-3 py-2 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-zinc-100 transition-colors hover:bg-zinc-700 md:inline-flex"
+              >
+                Contact
+                <span className="inline-flex h-4 w-4 items-center justify-center border border-zinc-600 bg-zinc-700 text-[0.55rem] leading-none text-zinc-200">
+                  {"\u2197"}
+                </span>
+              </button>
             </div>
           </div>
         </header>
