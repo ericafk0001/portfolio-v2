@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { Boldonse } from "next/font/google";
 
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -25,6 +26,12 @@ gsap.registerPlugin(
   ScrollToPlugin,
   SplitText,
 );
+
+const boldonse = Boldonse({
+  weight: "400",
+  subsets: ["latin"],
+  adjustFontFallback: false,
+});
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -127,7 +134,7 @@ export default function Home() {
 
           float field = mix(ridged, detail, 0.22);
           float body = smoothstep(0.34, 0.9, field);
-          float highlight = smoothstep(1.0, 1.0, field) * 0.95; //brightness highlights
+          float highlight = smoothstep(0.9, 1.0, field) * 0.95; //brightness highlights
           float lum = clamp(body * 0.9 + highlight, 0.0, 1.0);
 
           float blackMix = smoothstep(0.03, 0.34, lum);
@@ -205,7 +212,7 @@ export default function Home() {
       />
 
       <main className="relative z-10 flex min-h-screen items-end">
-        <h1 className="m-0 px-3 pb-8 text-[clamp(4.25rem,20vw,17rem)] font-black uppercase leading-[0.8] tracking-[0.04em] text-white mix-blend-screen md:px-5 md:pb-12">
+        <h1 className={`${boldonse.className} m-0 px-3 pb-8 text-[clamp(4.25rem,20vw,17rem)] uppercase leading-[0.8] tracking-[0.04em] text-white mix-blend-screen md:px-5 md:pb-12`}>
           ERIC LIN
         </h1>
       </main>
