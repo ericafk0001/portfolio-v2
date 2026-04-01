@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
 import { Boldonse } from "next/font/google";
 
 import { gsap } from "gsap";
@@ -16,7 +14,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { SplitText } from "gsap/SplitText";
 
-import { GradFlow } from "gradflow";
+import { InteractiveGradFlow } from "@/components/interactive-gradflow";
 
 gsap.registerPlugin(
   useGSAP,
@@ -38,8 +36,8 @@ const boldonse = Boldonse({
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
-      <GradFlow
-        className="absolute z-0"
+      <InteractiveGradFlow
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full"
         config={{
           color1: { r: 0, g: 0, b: 0 },
           color2: { r: 12, g: 12, b: 12 },
@@ -50,9 +48,9 @@ export default function Home() {
           noise: 0.05,
         }}
       />
-      <main className="relative z-10 flex min-h-screen items-end">
+      <main className="pointer-events-none relative z-10 flex min-h-screen items-end">
         <h1
-          className={`${boldonse.className} z-67 m-0 px-3 pb-8 text-[clamp(4.25rem,20vw,17rem)] uppercase leading-[0.8] tracking-[0.04em] text-white mix-blend-screen md:px-5 md:pb-12`}
+          className={`${boldonse.className} select-none z-67 m-0 px-3 pb-8 text-[clamp(4.25rem,20vw,17rem)] uppercase leading-[0.8] tracking-[0.04em] text-white mix-blend-screen md:px-5 md:pb-12`}
         >
           ERIC LIN
         </h1>
