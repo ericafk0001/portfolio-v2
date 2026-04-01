@@ -212,7 +212,9 @@ export default function Home() {
       />
 
       <main className="relative z-10 flex min-h-screen items-end">
-        <h1 className={`${boldonse.className} m-0 px-3 pb-8 text-[clamp(4.25rem,20vw,17rem)] uppercase leading-[0.8] tracking-[0.04em] text-white mix-blend-screen md:px-5 md:pb-12`}>
+        <h1
+          className={`${boldonse.className} m-0 px-3 pb-8 text-[clamp(4.25rem,20vw,17rem)] uppercase leading-[0.8] tracking-[0.04em] text-white mix-blend-screen md:px-5 md:pb-12`}
+        >
           ERIC LIN
         </h1>
       </main>
