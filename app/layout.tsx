@@ -35,7 +35,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${stalinistOne.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-(family-name:--font-geist-mono) bg-black text-zinc-100">
-        <header className="fixed inset-x-0 top-0 z-20 border-b border-white/10 bg-transparent backdrop-blur-sm">
+        <header className="fixed inset-x-0 top-0 z-20 border-b-2 border-white/25 bg-transparent backdrop-blur-sm">
           <div className="flex h-16 w-full items-center px-3 md:px-5">
             <div className="flex items-center">
               <a
