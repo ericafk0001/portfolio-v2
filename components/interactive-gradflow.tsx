@@ -31,6 +31,8 @@ export type GradientConfigInput = {
 export type InteractiveGradFlowProps = {
   config?: GradientConfigInput;
   className?: string;
+  paused?: boolean;
+  onReady?: () => void;
 };
 
 const DEFAULT_CONFIG = {
@@ -369,8 +371,15 @@ function toVec3(color: RGB): [number, number, number] {
 export function InteractiveGradFlow({
   config,
   className = "",
+  paused = false,
+  onReady,
 }: InteractiveGradFlowProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pausedRef = useRef(paused);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   const normalizedConfig = useMemo(() => {
     const merged = { ...DEFAULT_CONFIG };
@@ -449,9 +458,9 @@ export function InteractiveGradFlow({
     let frameId = 0;
     let disposed = false;
     let isHovering = false;
-    let targetPointer = new THREE.Vector2(0.5, 0.5);
-    let currentPointer = new THREE.Vector2(0.5, 0.5);
-    let trailPointers = [
+    const targetPointer = new THREE.Vector2(0.5, 0.5);
+    const currentPointer = new THREE.Vector2(0.5, 0.5);
+    const trailPointers = [
       new THREE.Vector2(0.5, 0.5),
       new THREE.Vector2(0.5, 0.5),
       new THREE.Vector2(0.5, 0.5),
@@ -535,29 +544,42 @@ export function InteractiveGradFlow({
     parent?.addEventListener("pointercancel", handlePointerCancel);
     window.addEventListener("resize", resize);
 
-    const startTime = performance.now();
+    renderer.compile(scene, camera);
+    renderer.render(scene, camera);
+    onReady?.();
+
+    let animationTime = 0;
+    let previousFrameTime = performance.now();
 
     const animate = (currentTime: number) => {
       if (disposed) {
         return;
       }
 
-      const elapsed = (currentTime - startTime) / 1000;
+      const deltaSeconds = Math.min(
+        (currentTime - previousFrameTime) / 1000,
+        0.05,
+      );
+      previousFrameTime = currentTime;
 
-      currentPointer.lerp(targetPointer, 0.14);
-      if (isHovering) {
-        pointerStrength += (targetStrength - pointerStrength) * 0.2;
-      } else {
-        pointerStrength *= 0.92;
+      if (!pausedRef.current) {
+        animationTime += deltaSeconds;
+
+        currentPointer.lerp(targetPointer, 0.14);
+        if (isHovering) {
+          pointerStrength += (targetStrength - pointerStrength) * 0.2;
+        } else {
+          pointerStrength *= 0.92;
+        }
+        pointerVelocity *= 0.92;
+
+        trailPointers[0].lerp(currentPointer, 0.12);
+        trailPointers[1].lerp(trailPointers[0], 0.08);
+        trailPointers[2].lerp(trailPointers[1], 0.06);
+        trailPointers[3].lerp(trailPointers[2], 0.045);
       }
-      pointerVelocity *= 0.92;
 
-      trailPointers[0].lerp(currentPointer, 0.12);
-      trailPointers[1].lerp(trailPointers[0], 0.08);
-      trailPointers[2].lerp(trailPointers[1], 0.06);
-      trailPointers[3].lerp(trailPointers[2], 0.045);
-
-      uniforms.u_time.value = elapsed;
+      uniforms.u_time.value = animationTime;
       uniforms.u_pointer.value.copy(currentPointer);
       uniforms.u_pointerStrength.value = pointerStrength;
       uniforms.u_pointerVelocity.value = pointerVelocity;
@@ -588,7 +610,7 @@ export function InteractiveGradFlow({
       material.dispose();
       renderer.dispose();
     };
-  }, [normalizedConfig]);
+  }, [normalizedConfig, onReady]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

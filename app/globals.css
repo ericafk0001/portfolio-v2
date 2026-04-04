@@ -60,3 +60,12 @@ svg.active .svg-elem-1 {
     fill-opacity: 1;
   }
 }
+
+.page-hidden {
+  opacity: 0;
+}
+
+.page-visible {
+  opacity: 1;
+  transition: opacity 0.8s ease-out;
+}
