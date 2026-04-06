@@ -376,6 +376,14 @@ export function InteractiveGradFlow({
 }: InteractiveGradFlowProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pausedRef = useRef(paused);
+  const configKey = JSON.stringify(config ?? {});
+  const stableConfig = useMemo(() => {
+    try {
+      return JSON.parse(configKey) as GradientConfigInput;
+    } catch {
+      return undefined;
+    }
+  }, [configKey]);
 
   useEffect(() => {
     pausedRef.current = paused;
@@ -384,14 +392,17 @@ export function InteractiveGradFlow({
   const normalizedConfig = useMemo(() => {
     const merged = { ...DEFAULT_CONFIG };
 
-    if (config) {
-      if (config.color1) merged.color1 = normalizeColor(config.color1);
-      if (config.color2) merged.color2 = normalizeColor(config.color2);
-      if (config.color3) merged.color3 = normalizeColor(config.color3);
-      if (config.speed !== undefined) merged.speed = config.speed;
-      if (config.scale !== undefined) merged.scale = config.scale;
-      if (config.type) merged.type = config.type;
-      if (config.noise !== undefined) merged.noise = config.noise;
+    if (stableConfig) {
+      if (stableConfig.color1)
+        merged.color1 = normalizeColor(stableConfig.color1);
+      if (stableConfig.color2)
+        merged.color2 = normalizeColor(stableConfig.color2);
+      if (stableConfig.color3)
+        merged.color3 = normalizeColor(stableConfig.color3);
+      if (stableConfig.speed !== undefined) merged.speed = stableConfig.speed;
+      if (stableConfig.scale !== undefined) merged.scale = stableConfig.scale;
+      if (stableConfig.type) merged.type = stableConfig.type;
+      if (stableConfig.noise !== undefined) merged.noise = stableConfig.noise;
     }
 
     return {
@@ -403,7 +414,7 @@ export function InteractiveGradFlow({
       type: GRADIENT_TYPE_NUMBER[merged.type],
       noise: merged.noise,
     };
-  }, [config]);
+  }, [configKey, stableConfig]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
