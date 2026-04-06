@@ -537,13 +537,11 @@ export function InteractiveGradFlow({
 
     const handlePointerLeave = () => {
       isHovering = false;
-      pointerStrength = 0;
       targetStrength = 0;
     };
 
     const handlePointerCancel = () => {
       isHovering = false;
-      pointerStrength = 0;
       targetStrength = 0;
     };
 
