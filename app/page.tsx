@@ -53,6 +53,7 @@ export default function Home() {
   const smoothWrapperRef = useRef<HTMLDivElement | null>(null);
   const smoothContentRef = useRef<HTMLDivElement | null>(null);
   const secondSectionRef = useRef<HTMLElement | null>(null);
+  const titleMaskRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
@@ -189,6 +190,13 @@ export default function Home() {
       return;
     }
 
+    let split: SplitText | null = null;
+
+    if (titleRef.current) {
+      split = new SplitText(titleRef.current, { type: "chars" });
+      gsap.set(split.chars, { yPercent: 150, willChange: "transform" });
+    }
+
     const tl = gsap.timeline({
       onComplete: () => setIsLoaderVisible(false),
     });
@@ -199,11 +207,16 @@ export default function Home() {
       { autoAlpha: 1, y: 0, duration: 0.95, ease: "power3.out" },
       0,
     )
-      .fromTo(
-        titleRef.current,
-        { autoAlpha: 0, y: 24 },
-        { autoAlpha: 1, y: 0, duration: 0.85, ease: "power3.out" },
-        0.15,
+      .to(
+        split?.chars ?? [],
+        {
+          yPercent: 0,
+          stagger: 0.065,
+          delay: 0.24,
+          duration: 0.42,
+          ease: "power3.out",
+        },
+        0,
       )
       .to(
         loaderRef.current,
@@ -222,6 +235,7 @@ export default function Home() {
 
     return () => {
       tl.kill();
+      split?.revert();
     };
   }, [allReady]);
 
@@ -317,12 +331,18 @@ export default function Home() {
               config={gradientConfig}
             />
             <main className="pointer-events-none relative z-10 flex min-h-screen w-full items-end">
-              <h1
-                ref={titleRef}
-                className="relative z-20 ml-4 mr-20 md:mr-28 lg:mr-32 mb-8 whitespace-nowrap text-white uppercase leading-none font-(family-name:--font-boldonse) text-[clamp(3rem,18vw,20rem)]"
+              <div
+                ref={titleMaskRef}
+                className="relative z-20 ml-4 mr-20 md:mr-36 lg:mr-36 mb-8 overflow-hidden pt-[3em] pb-[2em]"
+                style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" }}
               >
-                Eric Lin
-              </h1>
+                <h1
+                  ref={titleRef}
+                  className="whitespace-nowrap text-white uppercase leading-none font-(family-name:--font-boldonse) text-[clamp(3rem,18vw,20rem)]"
+                >
+                  Eric Lin
+                </h1>
+              </div>
             </main>
           </div>
           <section
