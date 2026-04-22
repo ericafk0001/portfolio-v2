@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { Space_Grotesk } from "next/font/google";
 
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -25,6 +26,10 @@ const InteractiveGradFlow = dynamic(
   { ssr: false },
 );
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+});
+
 gsap.registerPlugin(
   useGSAP,
   DrawSVGPlugin,
@@ -37,6 +42,31 @@ gsap.registerPlugin(
 );
 
 export default function Home() {
+  const featuredWorks = useMemo(
+    () => [
+      {
+        title: "PocketDoc",
+        period: "April 2026 - Present",
+        href: "#",
+        image: "images/pocketdoc.png",
+      },
+      {
+        title: "Shadow Kittens TD",
+        period: "March 2026 - Present",
+        href: "#",
+        image: "images/cat.png",
+      },
+      {
+        title: "CentMetrics",
+        period: "February 2026 - Present",
+        href: "#",
+        image:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+      },
+    ],
+    [],
+  );
+
   const SECOND_SECTION_BG = "#000000";
   const CURVE_BASELINE_Y = 300;
   const DIVIDER_HEIGHT = 480;
@@ -49,6 +79,11 @@ export default function Home() {
   const [fontsReady, setFontsReady] = useState(false);
   const [gradientReady, setGradientReady] = useState(false);
   const [settleReady, setSettleReady] = useState(false);
+  const [hoverPreview, setHoverPreview] = useState({
+    visible: false,
+    image: "",
+    title: "",
+  });
   const pageRef = useRef<HTMLDivElement | null>(null);
   const smoothWrapperRef = useRef<HTMLDivElement | null>(null);
   const smoothContentRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +94,9 @@ export default function Home() {
   const pathRef = useRef<SVGPathElement | null>(null);
   const shadowPathRef = useRef<SVGPathElement | null>(null);
   const fillPathRef = useRef<SVGPathElement | null>(null);
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const previewPosRef = useRef({ x: 0, y: 0 });
+  const previewRafRef = useRef<number | null>(null);
   const domReady = true;
 
   const animationState = useRef({
@@ -72,7 +110,29 @@ export default function Home() {
     setGradientReady(true);
   }, []);
 
-  const lerp = (x: number, y: number, a: number) => x * (1 - a) + y * a;
+  const updatePreviewPosition = useCallback((x: number, y: number) => {
+    previewPosRef.current = { x, y };
+
+    if (previewRafRef.current !== null) {
+      return;
+    }
+
+    previewRafRef.current = window.requestAnimationFrame(() => {
+      previewRafRef.current = null;
+
+      if (!previewRef.current) {
+        return;
+      }
+
+      previewRef.current.style.left = `${previewPosRef.current.x}px`;
+      previewRef.current.style.top = `${previewPosRef.current.y}px`;
+    });
+  }, []);
+
+  const lerp = useCallback(
+    (x: number, y: number, a: number) => x * (1 - a) + y * a,
+    [],
+  );
 
   const setPath = useCallback(
     (curveAmount: number) => {
@@ -298,6 +358,28 @@ export default function Home() {
     setPath(animationState.current.curveAmount);
   }, [setPath, windowWidth]);
 
+  useEffect(() => {
+    const preloadedImages = featuredWorks.map((project) => {
+      const image = new Image();
+      image.src = project.image;
+      return image;
+    });
+
+    return () => {
+      preloadedImages.forEach((image) => {
+        image.src = "";
+      });
+    };
+  }, [featuredWorks]);
+
+  useEffect(() => {
+    return () => {
+      if (previewRafRef.current !== null) {
+        window.cancelAnimationFrame(previewRafRef.current);
+      }
+    };
+  }, []);
+
   const steps = [
     { label: "Initializing page...", done: domReady },
     { label: "Loading fonts...", done: fontsReady },
@@ -347,7 +429,7 @@ export default function Home() {
           </div>
           <section
             ref={secondSectionRef}
-            className="relative min-h-screen w-full overflow-visible"
+            className={`relative min-h-screen w-full overflow-visible bg-black text-zinc-100 ${spaceGrotesk.className}`}
             style={{ backgroundColor: SECOND_SECTION_BG }}
           >
             <svg
@@ -396,9 +478,95 @@ export default function Home() {
                 strokeLinecap="round"
               />
             </svg>
+            <div className="relative z-10 px-4 pb-12 pt-8 sm:px-6 md:px-8 lg:px-10">
+              <h2 className="text-[clamp(2.75rem,4.4vw,4.6rem)] font-medium tracking-[-0.06em] text-zinc-100">
+                Featured Works
+              </h2>
+
+              <div className="mt-10 border-y border-white/20">
+                {featuredWorks.map((project) => (
+                  <a
+                    key={project.title}
+                    href={project.href}
+                    className="group relative block border-b border-white/20 px-0 py-6 last:border-b-0 sm:py-7 md:py-8"
+                    aria-label={project.title}
+                    onMouseEnter={(event) => {
+                      updatePreviewPosition(event.clientX, event.clientY);
+                      setHoverPreview({
+                        visible: true,
+                        image: project.image,
+                        title: project.title,
+                      });
+                    }}
+                    onMouseMove={(event) => {
+                      updatePreviewPosition(event.clientX, event.clientY);
+                    }}
+                    onMouseLeave={() => {
+                      setHoverPreview((prev) => ({
+                        ...prev,
+                        visible: false,
+                      }));
+                    }}
+                  >
+                    <div className="flex items-center justify-between gap-6">
+                      <span className="text-[clamp(1.25rem,1.7vw,2rem)] leading-tight tracking-[-0.04em] text-zinc-100 transition-all duration-300 ease-out group-hover:translate-x-2 group-hover:text-white">
+                        {project.title}
+                      </span>
+                      <span className="shrink-0 text-sm tracking-[-0.02em] text-zinc-400 sm:text-base">
+                        {project.period}
+                      </span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+
+              <div className="flex justify-center pt-10">
+                <a
+                  href="#"
+                  className="inline-flex items-center justify-center rounded-full border border-white/70 px-10 py-4 text-sm font-medium tracking-[0.01em] text-zinc-100 transition-colors hover:bg-white hover:text-black"
+                >
+                  More Projects
+                </a>
+              </div>
+            </div>
           </section>
         </div>
       </div>
+      <div
+        ref={previewRef}
+        className={`pointer-events-none fixed left-0 top-0 z-50 hidden h-52 w-80 overflow-hidden rounded-xl border border-white/25 bg-zinc-900/80 shadow-2xl transition-all duration-200 ease-out md:block ${hoverPreview.visible ? "opacity-100" : "opacity-0"}`}
+        style={{
+          transform: "translate(-50%, -50%)",
+        }}
+        aria-hidden="true"
+      >
+        {hoverPreview.image && (
+          <img
+            key={hoverPreview.image}
+            src={hoverPreview.image}
+            alt={`${hoverPreview.title} preview`}
+            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            style={{
+              animation:
+                "preview-image-slide 240ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
+          />
+        )}
+      </div>
+      <style jsx global>{`
+        @keyframes preview-image-slide {
+          from {
+            opacity: 0;
+            transform: translateY(18px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </>
   );
 }

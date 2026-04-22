@@ -61,8 +61,9 @@ export default function RootLayout({
                 <a href="#" className="px-5 transition-colors hover:text-white">
                   Projects
                 </a>
+                <span className="h-full w-px bg-white/20" />
                 <a href="#" className="px-5 transition-colors hover:text-white">
-                  Vision
+                  Honors
                 </a>
               </nav>
             </div>
