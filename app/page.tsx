@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import dynamic from "next/dynamic";
 import { Space_Grotesk } from "next/font/google";
 
@@ -97,6 +104,14 @@ export default function Home() {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const previewPosRef = useRef({ x: 0, y: 0 });
   const previewRafRef = useRef<number | null>(null);
+  const moreProjectsButtonRef = useRef<HTMLAnchorElement | null>(null);
+  const moreProjectsTextRef = useRef<HTMLSpanElement | null>(null);
+  const moreProjectsRafRef = useRef<number | null>(null);
+  const moreProjectsMotionRef = useRef({
+    current: { x: 0, y: 0, rotation: 0, scale: 1 },
+    target: { x: 0, y: 0, rotation: 0, scale: 1 },
+    velocity: { x: 0, y: 0, rotation: 0, scale: 0 },
+  });
   const domReady = true;
 
   const animationState = useRef({
@@ -127,6 +142,122 @@ export default function Home() {
       previewRef.current.style.left = `${previewPosRef.current.x}px`;
       previewRef.current.style.top = `${previewPosRef.current.y}px`;
     });
+  }, []);
+
+  const renderMoreProjectsMotion = useCallback(() => {
+    const button = moreProjectsButtonRef.current;
+    const text = moreProjectsTextRef.current;
+
+    if (!button || !text) {
+      return;
+    }
+
+    const { x, y, rotation, scale } = moreProjectsMotionRef.current.current;
+
+    button.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
+    text.style.transform = `translate3d(${x * 0.64}px, ${y * 0.64}px, 0) rotate(${rotation * 0.42}deg) scale(${1 + (scale - 1) * 0.52})`;
+    button.style.boxShadow = `0 ${Math.max(10, scale * 16)}px ${Math.max(24, scale * 32)}px rgba(0, 0, 0, ${0.16 + (scale - 1) * 1.8})`;
+  }, []);
+
+  const stepMoreProjectsMotion = useCallback(() => {
+    const state = moreProjectsMotionRef.current;
+
+    const stiffness = 0.14;
+    const damping = state.target.scale > 1.001 ? 0.74 : 0.7;
+
+    const advance = (key: "x" | "y" | "rotation" | "scale") => {
+      state.velocity[key] +=
+        (state.target[key] - state.current[key]) * stiffness;
+      state.velocity[key] *= damping;
+      state.current[key] += state.velocity[key];
+    };
+
+    advance("x");
+    advance("y");
+    advance("rotation");
+    advance("scale");
+
+    renderMoreProjectsMotion();
+
+    const isSettled =
+      Math.abs(state.current.x) < 0.15 &&
+      Math.abs(state.current.y) < 0.15 &&
+      Math.abs(state.current.rotation) < 0.15 &&
+      Math.abs(state.current.scale - 1) < 0.002 &&
+      Math.abs(state.velocity.x) < 0.05 &&
+      Math.abs(state.velocity.y) < 0.05 &&
+      Math.abs(state.velocity.rotation) < 0.05 &&
+      Math.abs(state.velocity.scale) < 0.0006;
+
+    if (isSettled) {
+      const button = moreProjectsButtonRef.current;
+      const text = moreProjectsTextRef.current;
+
+      if (button) {
+        button.style.transform = "";
+        button.style.boxShadow = "";
+      }
+
+      if (text) {
+        text.style.transform = "";
+      }
+
+      moreProjectsRafRef.current = null;
+      return;
+    }
+
+    moreProjectsRafRef.current = window.requestAnimationFrame(
+      stepMoreProjectsMotion,
+    );
+  }, [renderMoreProjectsMotion]);
+
+  const startMoreProjectsMotion = useCallback(() => {
+    if (moreProjectsRafRef.current !== null) {
+      return;
+    }
+
+    moreProjectsRafRef.current = window.requestAnimationFrame(
+      stepMoreProjectsMotion,
+    );
+  }, [stepMoreProjectsMotion]);
+
+  const updateMoreProjectsButtonPosition = useCallback(
+    (event: ReactPointerEvent<HTMLAnchorElement>) => {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = event.clientX - centerX;
+      const deltaY = event.clientY - centerY;
+
+      const translateX = Math.max(-36, Math.min(36, deltaX * 0.5));
+      const translateY = Math.max(-24, Math.min(24, deltaY * 0.5));
+      const rotation = Math.max(-14, Math.min(14, deltaX * 0.085));
+      const scale = 1.08 + Math.min(0.09, Math.hypot(deltaX, deltaY) * 0.00065);
+
+      const state = moreProjectsMotionRef.current;
+      state.target = { x: translateX, y: translateY, rotation, scale };
+
+      startMoreProjectsMotion();
+    },
+    [startMoreProjectsMotion],
+  );
+
+  const resetMoreProjectsButtonPosition = useCallback(() => {
+    const state = moreProjectsMotionRef.current;
+
+    if (moreProjectsRafRef.current === null) {
+      return;
+    }
+
+    state.target = { x: 0, y: 0, rotation: 0, scale: 1 };
+    state.velocity.x += state.current.x * 0.36;
+    state.velocity.y += state.current.y * 0.36;
+    state.velocity.rotation += state.current.rotation * 0.28;
+    state.velocity.scale -= (state.current.scale - 1) * 0.48;
+
+    startMoreProjectsMotion();
   }, []);
 
   const lerp = useCallback(
@@ -522,10 +653,19 @@ export default function Home() {
 
               <div className="flex justify-center pt-10">
                 <a
+                  ref={moreProjectsButtonRef}
                   href="#"
-                  className="inline-flex items-center justify-center rounded-full border border-white/70 px-10 py-4 text-sm font-medium tracking-[0.01em] text-zinc-100 transition-colors hover:bg-white hover:text-black"
+                  className="inline-flex items-center justify-center rounded-full border border-white/70 px-10 py-4 text-sm font-medium tracking-[0.01em] text-zinc-100 transition-[background-color,color,border-color] duration-200 ease-out will-change-transform hover:bg-white hover:text-black"
+                  onPointerEnter={updateMoreProjectsButtonPosition}
+                  onPointerMove={updateMoreProjectsButtonPosition}
+                  onPointerLeave={resetMoreProjectsButtonPosition}
                 >
-                  More Projects
+                  <span
+                    ref={moreProjectsTextRef}
+                    className="inline-block will-change-transform"
+                  >
+                    More Projects
+                  </span>
                 </a>
               </div>
             </div>
