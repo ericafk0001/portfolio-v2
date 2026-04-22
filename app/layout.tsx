@@ -54,7 +54,7 @@ export default function RootLayout({
               <span className="mx-3 h-16 w-px bg-white/20" />
               <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-geist-mono) text-zinc-300 lg:flex">
                 <a href="#" className="px-5 transition-colors hover:text-white">
-                  About Me
+                  About
                 </a>
 
                 <span className="h-full w-px bg-white/20" />
@@ -62,7 +62,7 @@ export default function RootLayout({
                   Projects
                 </a>
                 <a href="#" className="px-5 transition-colors hover:text-white">
-                  My Goal
+                  Vision
                 </a>
               </nav>
             </div>

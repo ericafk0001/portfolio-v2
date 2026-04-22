@@ -370,7 +370,7 @@ export default function Home() {
               />
               <path
                 ref={pathRef}
-                stroke="white"
+                stroke="none"
                 strokeWidth="2"
                 fill="none"
                 strokeLinecap="round"
