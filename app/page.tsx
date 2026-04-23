@@ -37,6 +37,11 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
 });
 
+type StackItem = {
+  label: string;
+  iconSrc: string;
+};
+
 gsap.registerPlugin(
   useGSAP,
   DrawSVGPlugin,
@@ -51,6 +56,8 @@ gsap.registerPlugin(
 export default function Home() {
   const thirdSectionCopy =
     "I’m a versatile developer specializing in full-stack systems, data-driven applications, scalable architectures, and interactive, real-world projects. I enjoy bringing ideas to life through end-to-end product development, combining strong system design with practical execution. My work emphasizes fast iteration, rigorous logic, and clean, maintainable code, while also exploring areas like machine learning and game development to create both intelligent and engaging experiences.";
+  const techHeaderText = "Tech Stacks";
+  const techProgrammingText = "Programming";
 
   const featuredWorks = useMemo(
     () => [
@@ -82,6 +89,27 @@ export default function Home() {
     [thirdSectionCopy],
   );
 
+  const programmingStackItems = useMemo<StackItem[]>(
+    () => [
+      { label: "Python", iconSrc: "/stack-icons/python.svg" },
+      { label: "Go", iconSrc: "/stack-icons/go.svg" },
+      { label: "JavaScript", iconSrc: "/stack-icons/javascript.svg" },
+      { label: "TypeScript", iconSrc: "/stack-icons/typescript.svg" },
+      { label: "Git", iconSrc: "/stack-icons/git.svg" },
+      { label: "C / C++", iconSrc: "/stack-icons/cpp.svg" },
+    ],
+    [],
+  );
+
+  const techHeaderChars = useMemo(
+    () => Array.from(techHeaderText),
+    [techHeaderText],
+  );
+  const techProgrammingChars = useMemo(
+    () => Array.from(techProgrammingText),
+    [techProgrammingText],
+  );
+
   const SECOND_SECTION_BG = "#000000";
   const CURVE_BASELINE_Y = 300;
   const DIVIDER_HEIGHT = 480;
@@ -105,6 +133,7 @@ export default function Home() {
   const secondSectionRef = useRef<HTMLElement | null>(null);
   const thirdSectionRef = useRef<HTMLElement | null>(null);
   const thirdSectionTextRef = useRef<HTMLParagraphElement | null>(null);
+  const techSectionRef = useRef<HTMLElement | null>(null);
   const titleMaskRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -501,11 +530,14 @@ export default function Home() {
       gsap.set(letters, {
         opacity: 0.22,
         y: 18,
+        filter: "blur(9px)",
+        willChange: "opacity, transform, filter",
       });
 
       gsap.to(letters, {
         opacity: 1,
         y: 0,
+        filter: "blur(0px)",
         ease: "none",
         stagger: {
           each: 0.035,
@@ -519,6 +551,66 @@ export default function Home() {
         },
       });
     }, thirdSectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, [allReady]);
+
+  useEffect(() => {
+    if (!techSectionRef.current) {
+      return;
+    }
+
+    const headerChars = Array.from(
+      techSectionRef.current.querySelectorAll<HTMLElement>("[data-tech-char]"),
+    );
+    const iconCards = Array.from(
+      techSectionRef.current.querySelectorAll<HTMLElement>(
+        "[data-tech-icon-card]",
+      ),
+    );
+
+    if (headerChars.length === 0 && iconCards.length === 0) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.set(headerChars, {
+        opacity: 0,
+      });
+
+      gsap.set(iconCards, {
+        autoAlpha: 0,
+        scale: 0,
+        transformOrigin: "50% 50%",
+      });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: techSectionRef.current,
+          start: "top 78%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      tl.to(headerChars, {
+        opacity: 1,
+        duration: 0.34,
+        stagger: 0.024,
+        ease: "power2.out",
+      }).to(
+        iconCards,
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.55,
+          stagger: 0.08,
+          ease: "back.out(1.9)",
+        },
+        "-=0.22",
+      );
+    }, techSectionRef);
 
     return () => {
       ctx.revert();
@@ -753,21 +845,55 @@ export default function Home() {
             </p>
           </section>
           <section
+            ref={techSectionRef}
             className={`min-h-screen w-full bg-black px-6 py-20 text-zinc-100 ${spaceGrotesk.className}`}
           >
             <div className="mr-auto ml-0 w-full max-w-5xl">
               <h2 className="text-left text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[-0.06em] text-zinc-100">
-                Tech Stacks
+                {techHeaderChars.map((char, index) => (
+                  <span
+                    key={`tech-header-char-${index}`}
+                    data-tech-char
+                    className="inline-block"
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </span>
+                ))}
               </h2>
 
               <div className="mt-12 space-y-10">
                 <div className="text-left">
                   <h3 className="text-4xl font-semibold text-zinc-200">
-                    Programming
+                    {techProgrammingChars.map((char, index) => (
+                      <span
+                        key={`tech-programming-char-${index}`}
+                        data-tech-char
+                        className="inline-block"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </span>
+                    ))}
                   </h3>
-                  <p className="mt-3 text-lg tracking-[-0.02em] text-zinc-200">
-                    TypeScript, JavaScript, Python, C#
-                  </p>
+                  <div className="mt-6 flex flex-wrap gap-x-10 gap-y-8">
+                    {programmingStackItems.map(({ label, iconSrc }) => (
+                      <div
+                        key={label}
+                        data-tech-icon-card
+                        className="flex flex-col items-start gap-2"
+                      >
+                        <img
+                          src={iconSrc}
+                          alt={`${label} icon`}
+                          className="h-11 w-11 object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="text-[1.15rem] tracking-[-0.02em] text-zinc-200">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
