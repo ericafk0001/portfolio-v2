@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Boldonse } from "next/font/google";
 import { Stalinist_One } from "next/font/google";
 import "./globals.css";
-import { Crosshair } from "@deemlol/next-icons";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,7 +72,17 @@ export default function RootLayout({
                 type="button"
                 className="hidden md:flex gap-2 items-center text-red-500"
               >
-                Night Mode <Crosshair className="h-4 w-4" />
+                Night Mode
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-4 w-4 items-center justify-center text-xs leading-none"
+                >
+                  <img
+                    src="images/Crosshair.svg"
+                    alt="Crosshair Icon"
+                    className="h-6 w-6"
+                  />
+                </span>
               </button>
 
               <button
@@ -82,7 +91,11 @@ export default function RootLayout({
               >
                 Contact
                 <span className="inline-flex h-4 w-4 items-center justify-center border border-zinc-600 bg-zinc-700 text-[0.55rem] leading-none text-zinc-200">
-                  &#8599;
+                  <img
+                    src="images/ArrowUpRight.svg"
+                    alt="Arrow Up Right Icon"
+                    className="h-6 w-6"
+                  />
                 </span>
               </button>
             </div>

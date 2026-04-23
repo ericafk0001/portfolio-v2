@@ -58,6 +58,9 @@ export default function Home() {
     "I’m a versatile developer specializing in full-stack systems, data-driven applications, scalable architectures, and interactive, real-world projects. I enjoy bringing ideas to life through end-to-end product development, combining strong system design with practical execution. My work emphasizes fast iteration, rigorous logic, and clean, maintainable code, while also exploring areas like machine learning and game development to create both intelligent and engaging experiences.";
   const techHeaderText = "Tech Stacks";
   const techProgrammingText = "Programming";
+  const techWorkflowText = "Workflow";
+  const techWebDevText = "Web Dev";
+  const techDesignText = "Design";
 
   const featuredWorks = useMemo(
     () => [
@@ -92,12 +95,41 @@ export default function Home() {
   const programmingStackItems = useMemo<StackItem[]>(
     () => [
       { label: "Python", iconSrc: "/stack-icons/python.svg" },
-      { label: "Go", iconSrc: "/stack-icons/go.svg" },
-      { label: "JavaScript", iconSrc: "/stack-icons/javascript.svg" },
-      { label: "TypeScript", iconSrc: "/stack-icons/typescript.svg" },
-      { label: "Git", iconSrc: "/stack-icons/git.svg" },
-      { label: "C / C++", iconSrc: "/stack-icons/cpp.svg" },
+      { label: "Java", iconSrc: "/stack-icons/java.png" },
     ],
+    [],
+  );
+
+  const workflowStackItems = useMemo<StackItem[]>(
+    () => [
+      { label: "Git", iconSrc: "/stack-icons/git.png" },
+      { label: "GitHub", iconSrc: "/stack-icons/github.svg" },
+      { label: "Milanote", iconSrc: "/stack-icons/milanote.png" },
+      { label: "Supabase", iconSrc: "/stack-icons/supabase.png" },
+      { label: "Vercel", iconSrc: "/stack-icons/vercel.png" },
+    ],
+    [],
+  );
+
+  const webDevStackItems = useMemo<StackItem[]>(
+    () => [
+      { label: "HTML", iconSrc: "/stack-icons/html.png" },
+      { label: "CSS", iconSrc: "/stack-icons/css.png" },
+      { label: "Javascript", iconSrc: "/stack-icons/javascript.png" },
+      { label: "React", iconSrc: "/stack-icons/react.png" },
+      { label: "TypeScript", iconSrc: "/stack-icons/typescript.png" },
+      { label: "Tailwind CSS", iconSrc: "/stack-icons/tailwindcss.png" },
+      { label: "Node.js", iconSrc: "/stack-icons/node.png" },
+      { label: "Next.js", iconSrc: "/stack-icons/next.png" },
+      { label: "Socket.io", iconSrc: "/stack-icons/socket-io.png" },
+      { label: "Locomotive", iconSrc: "/stack-icons/locomotive.png" },
+      { label: "Framer Motion", iconSrc: "/stack-icons/framer-motion.svg" },
+    ],
+    [],
+  );
+
+  const designStackItems = useMemo<StackItem[]>(
+    () => [{ label: "Figma", iconSrc: "/stack-icons/figma.png" }],
     [],
   );
 
@@ -108,6 +140,18 @@ export default function Home() {
   const techProgrammingChars = useMemo(
     () => Array.from(techProgrammingText),
     [techProgrammingText],
+  );
+  const techWorkflowChars = useMemo(
+    () => Array.from(techWorkflowText),
+    [techWorkflowText],
+  );
+  const techWebDevChars = useMemo(
+    () => Array.from(techWebDevText),
+    [techWebDevText],
+  );
+  const techDesignChars = useMemo(
+    () => Array.from(techDesignText),
+    [techDesignText],
   );
 
   const SECOND_SECTION_BG = "#000000";
@@ -874,12 +918,118 @@ export default function Home() {
                       </span>
                     ))}
                   </h3>
-                  <div className="mt-6 flex flex-wrap gap-x-10 gap-y-8">
+                  <div className="mt-5 flex flex-wrap justify-start gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-5">
                     {programmingStackItems.map(({ label, iconSrc }) => (
                       <div
                         key={label}
                         data-tech-icon-card
-                        className="flex flex-col items-start gap-2"
+                        className="flex w-24 flex-col items-center gap-1 text-center sm:w-28"
+                      >
+                        {iconSrc ? (
+                          <img
+                            src={iconSrc}
+                            alt={`${label} icon`}
+                            className="h-11 w-11 object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : null}
+                        <span className="text-[1.15rem] tracking-[-0.02em] text-zinc-200">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-left">
+                  <h3 className="text-4xl font-semibold text-zinc-200">
+                    {techWorkflowChars.map((char, index) => (
+                      <span
+                        key={`tech-workflow-char-${index}`}
+                        data-tech-char
+                        className="inline-block"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </span>
+                    ))}
+                  </h3>
+                  <div className="mt-5 flex flex-wrap justify-start gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-5">
+                    {workflowStackItems.map(({ label, iconSrc }) => (
+                      <div
+                        key={label}
+                        data-tech-icon-card
+                        className="flex w-24 flex-col items-center gap-1 text-center sm:w-28"
+                      >
+                        {iconSrc ? (
+                          <img
+                            src={iconSrc}
+                            alt={`${label} icon`}
+                            className="h-11 w-11 object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : null}
+                        <span className="text-[1.15rem] tracking-[-0.02em] text-zinc-200">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-left">
+                  <h3 className="text-4xl font-semibold text-zinc-200">
+                    {techWebDevChars.map((char, index) => (
+                      <span
+                        key={`tech-web-dev-char-${index}`}
+                        data-tech-char
+                        className="inline-block"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </span>
+                    ))}
+                  </h3>
+                  <div className="mt-5 flex flex-wrap justify-start gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-5">
+                    {webDevStackItems.map(({ label, iconSrc }) => (
+                      <div
+                        key={label}
+                        data-tech-icon-card
+                        className="flex w-24 flex-col items-center gap-1 text-center sm:w-28"
+                      >
+                        <img
+                          src={iconSrc}
+                          alt={`${label} icon`}
+                          className="h-11 w-11 object-contain"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="text-[1.15rem] tracking-[-0.02em] text-zinc-200">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-left">
+                  <h3 className="text-4xl font-semibold text-zinc-200">
+                    {techDesignChars.map((char, index) => (
+                      <span
+                        key={`tech-design-char-${index}`}
+                        data-tech-char
+                        className="inline-block"
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </span>
+                    ))}
+                  </h3>
+                  <div className="mt-5 flex flex-wrap justify-start gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-5">
+                    {designStackItems.map(({ label, iconSrc }) => (
+                      <div
+                        key={label}
+                        data-tech-icon-card
+                        className="flex w-24 flex-col items-center gap-1 text-center sm:w-28"
                       >
                         <img
                           src={iconSrc}
