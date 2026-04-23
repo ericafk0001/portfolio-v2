@@ -627,33 +627,53 @@ export default function Home() {
       gsap.set(iconCards, {
         autoAlpha: 0,
         scale: 0,
+        y: 16,
         transformOrigin: "50% 50%",
       });
+
+      const iconRows = iconCards.reduce<HTMLElement[][]>((rows, card) => {
+        const cardTop = Math.round(card.offsetTop);
+        const lastRow = rows[rows.length - 1];
+        const lastRowTop = lastRow ? Math.round(lastRow[0].offsetTop) : -1;
+
+        if (!lastRow || lastRowTop !== cardTop) {
+          rows.push([card]);
+        } else {
+          lastRow.push(card);
+        }
+
+        return rows;
+      }, []);
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: techSectionRef.current,
-          start: "top 78%",
-          toggleActions: "play none none reverse",
+          start: "top 80%",
+          end: "bottom 85%",
+          scrub: 0.2,
         },
       });
 
       tl.to(headerChars, {
         opacity: 1,
-        duration: 0.34,
+        duration: 0.45,
         stagger: 0.024,
-        ease: "power2.out",
-      }).to(
-        iconCards,
-        {
+        ease: "none",
+      });
+
+      iconRows.forEach((row) => {
+        tl.to(row, {
           autoAlpha: 1,
           scale: 1,
-          duration: 0.55,
-          stagger: 0.08,
-          ease: "back.out(1.9)",
-        },
-        "-=0.22",
-      );
+          y: 0,
+          duration: 0.7,
+          stagger: {
+            each: 0.12,
+            from: "start",
+          },
+          ease: "none",
+        });
+      });
     }, techSectionRef);
 
     return () => {
