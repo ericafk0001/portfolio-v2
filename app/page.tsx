@@ -589,7 +589,7 @@ export default function Home() {
         },
         scrollTrigger: {
           trigger: thirdSectionRef.current,
-          start: "top 100%",
+          start: "top 110%",
           end: "center center",
           scrub: 0.9,
         },
