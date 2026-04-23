@@ -49,6 +49,9 @@ gsap.registerPlugin(
 );
 
 export default function Home() {
+  const thirdSectionCopy =
+    "I’m a versatile developer specializing in full-stack systems, data-driven applications, scalable architectures, and interactive, real-world projects. I enjoy bringing ideas to life through end-to-end product development, combining strong system design with practical execution. My work emphasizes fast iteration, rigorous logic, and clean, maintainable code, while also exploring areas like machine learning and game development to create both intelligent and engaging experiences.";
+
   const featuredWorks = useMemo(
     () => [
       {
@@ -74,6 +77,11 @@ export default function Home() {
     [],
   );
 
+  const thirdSectionWords = useMemo(
+    () => thirdSectionCopy.trim().split(/\s+/),
+    [thirdSectionCopy],
+  );
+
   const SECOND_SECTION_BG = "#000000";
   const CURVE_BASELINE_Y = 300;
   const DIVIDER_HEIGHT = 480;
@@ -95,6 +103,8 @@ export default function Home() {
   const smoothWrapperRef = useRef<HTMLDivElement | null>(null);
   const smoothContentRef = useRef<HTMLDivElement | null>(null);
   const secondSectionRef = useRef<HTMLElement | null>(null);
+  const thirdSectionRef = useRef<HTMLElement | null>(null);
+  const thirdSectionTextRef = useRef<HTMLParagraphElement | null>(null);
   const titleMaskRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -473,6 +483,49 @@ export default function Home() {
   }, [updatePathForScroll]);
 
   useEffect(() => {
+    if (!thirdSectionRef.current || !thirdSectionTextRef.current) {
+      return;
+    }
+
+    const letters = Array.from(
+      thirdSectionTextRef.current.querySelectorAll<HTMLElement>(
+        "[data-letter]",
+      ),
+    );
+
+    if (letters.length === 0) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.set(letters, {
+        opacity: 0.22,
+        y: 18,
+      });
+
+      gsap.to(letters, {
+        opacity: 1,
+        y: 0,
+        ease: "none",
+        stagger: {
+          each: 0.035,
+          from: "start",
+        },
+        scrollTrigger: {
+          trigger: thirdSectionRef.current,
+          start: "top 100%",
+          end: "center center",
+          scrub: 0.9,
+        },
+      });
+    }, thirdSectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, [allReady]);
+
+  useEffect(() => {
     setWindowWidth(window.innerWidth);
 
     const handleResize = () => {
@@ -667,6 +720,55 @@ export default function Home() {
                     More Projects
                   </span>
                 </a>
+              </div>
+            </div>
+          </section>
+          <section
+            ref={thirdSectionRef}
+            className="pb-150 flex max-h-[20vh] w-full items-center justify-center bg-black px-6 text-center text-zinc-100"
+          >
+            <p
+              ref={thirdSectionTextRef}
+              className={`w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] font-medium leading-[0.98] tracking-[-0.06em] text-zinc-200 ${spaceGrotesk.className}`}
+            >
+              {thirdSectionWords.flatMap((word, wordIndex) => {
+                const isLastWord = wordIndex === thirdSectionWords.length - 1;
+
+                return [
+                  <span key={`word-${wordIndex}`} className="whitespace-nowrap">
+                    {Array.from(word).map((letter, letterIndex) => (
+                      <span
+                        key={`letter-${wordIndex}-${letterIndex}`}
+                        data-letter
+                        aria-hidden="true"
+                        className="inline-block will-change-transform"
+                      >
+                        {letter}
+                      </span>
+                    ))}
+                  </span>,
+                  isLastWord ? "" : " ",
+                ];
+              })}
+            </p>
+          </section>
+          <section
+            className={`min-h-screen w-full bg-black px-6 py-20 text-zinc-100 ${spaceGrotesk.className}`}
+          >
+            <div className="mr-auto ml-0 w-full max-w-5xl">
+              <h2 className="text-left text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[-0.06em] text-zinc-100">
+                Tech Stacks
+              </h2>
+
+              <div className="mt-12 space-y-10">
+                <div className="text-left">
+                  <h3 className="text-4xl font-semibold text-zinc-200">
+                    Programming
+                  </h3>
+                  <p className="mt-3 text-lg tracking-[-0.02em] text-zinc-200">
+                    TypeScript, JavaScript, Python, C#
+                  </p>
+                </div>
               </div>
             </div>
           </section>
