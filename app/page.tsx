@@ -129,7 +129,11 @@ export default function Home() {
   );
 
   const designStackItems = useMemo<StackItem[]>(
-    () => [{ label: "Figma", iconSrc: "/stack-icons/figma.png" }],
+    () => [
+      { label: "Figma", iconSrc: "/stack-icons/figma.png" },
+      { label: "GIMP", iconSrc: "/stack-icons/gimp.png" },
+      { label: "Inkspace", iconSrc: "/stack-icons/inkspace.png" },
+    ],
     [],
   );
 
@@ -614,8 +618,17 @@ export default function Home() {
         "[data-tech-icon-card]",
       ),
     );
+    const designIconCards = Array.from(
+      techSectionRef.current.querySelectorAll<HTMLElement>(
+        "[data-tech-design-icon-card]",
+      ),
+    );
 
-    if (headerChars.length === 0 && iconCards.length === 0) {
+    if (
+      headerChars.length === 0 &&
+      iconCards.length === 0 &&
+      designIconCards.length === 0
+    ) {
       return;
     }
 
@@ -625,6 +638,13 @@ export default function Home() {
       });
 
       gsap.set(iconCards, {
+        autoAlpha: 0,
+        scale: 0,
+        y: 16,
+        transformOrigin: "50% 50%",
+      });
+
+      gsap.set(designIconCards, {
         autoAlpha: 0,
         scale: 0,
         y: 16,
@@ -674,6 +694,20 @@ export default function Home() {
           ease: "none",
         });
       });
+
+      if (designIconCards.length > 0) {
+        tl.to(designIconCards, {
+          autoAlpha: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: {
+            each: 0.12,
+            from: "start",
+          },
+          ease: "none",
+        });
+      }
     }, techSectionRef);
 
     return () => {
@@ -1048,7 +1082,7 @@ export default function Home() {
                     {designStackItems.map(({ label, iconSrc }) => (
                       <div
                         key={label}
-                        data-tech-icon-card
+                        data-tech-design-icon-card
                         className="flex w-24 flex-col items-center gap-1 text-center sm:w-28"
                       >
                         <img
