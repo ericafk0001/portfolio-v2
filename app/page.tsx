@@ -191,6 +191,7 @@ export default function Home() {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const previewPosRef = useRef({ x: 0, y: 0 });
   const previewRafRef = useRef<number | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   const moreProjectsButtonRef = useRef<HTMLAnchorElement | null>(null);
   const moreProjectsTextRef = useRef<HTMLSpanElement | null>(null);
   const moreProjectsRafRef = useRef<number | null>(null);
@@ -539,6 +540,34 @@ export default function Home() {
   }, [allReady]);
 
   useEffect(() => {
+    if (!allReady || !headerRef.current || !smoothContentRef.current) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { y: 0, opacity: 1 },
+        {
+          y: -36,
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: smoothContentRef.current,
+            start: "top top",
+            end: "top+=220 top",
+            scrub: 0.8,
+          },
+        },
+      );
+    }, smoothContentRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, [allReady]);
+
+  useEffect(() => {
     if (!secondSectionRef.current) {
       return;
     }
@@ -780,6 +809,78 @@ export default function Home() {
             ref={pageRef}
             className="relative min-h-[130vh] overflow-hidden bg-black"
           >
+            <header
+              ref={headerRef}
+              className="relative z-20 border-b-2 border-white/25 bg-transparent backdrop-blur-sm"
+            >
+              <div className="flex h-16 w-full items-center px-3 md:px-5">
+                <div className="flex items-center">
+                  <a
+                    href="#"
+                    className="font-(family-name:--font-stalinist-one) shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white px-5"
+                  >
+                    ERIC LIN
+                  </a>
+                  <span className="mx-3 h-16 w-px bg-white/20" />
+                  <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-geist-mono) text-zinc-300 lg:flex">
+                    <a
+                      href="#"
+                      className="px-5 transition-colors hover:text-white"
+                    >
+                      About
+                    </a>
+
+                    <span className="h-full w-px bg-white/20" />
+                    <a
+                      href="#"
+                      className="px-5 transition-colors hover:text-white"
+                    >
+                      Projects
+                    </a>
+                    <span className="h-full w-px bg-white/20" />
+                    <a
+                      href="#"
+                      className="px-5 transition-colors hover:text-white"
+                    >
+                      Honors
+                    </a>
+                  </nav>
+                </div>
+
+                <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
+                  <button
+                    type="button"
+                    className="hidden md:flex gap-2 items-center text-red-500"
+                  >
+                    Night Mode
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex h-4 w-4 items-center justify-center text-xs leading-none"
+                    >
+                      <img
+                        src="images/Crosshair.svg"
+                        alt="Crosshair Icon"
+                        className="h-6 w-6"
+                      />
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="hidden items-center gap-2 border border-zinc-700 bg-zinc-800 px-3 py-2 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-zinc-100 transition-colors hover:bg-zinc-700 md:inline-flex"
+                  >
+                    Contact
+                    <span className="inline-flex h-4 w-4 items-center justify-center border border-zinc-600 bg-zinc-700 text-[0.55rem] leading-none text-zinc-200">
+                      <img
+                        src="images/ArrowUpRight.svg"
+                        alt="Arrow Up Right Icon"
+                        className="h-6 w-6"
+                      />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </header>
             <InteractiveGradFlow
               className="pointer-events-none absolute inset-0 z-0 h-full w-full"
               paused={false}
@@ -1102,8 +1203,22 @@ export default function Home() {
               </div>
             </div>
           </section>
+
+          <div aria-hidden="true" className="h-screen pointer-events-none" />
         </div>
       </div>
+      <footer
+        id="site-footer"
+        className="fixed inset-x-0 bottom-0 min-h-screen bg-zinc-900 text-zinc-300 z-[-9] border-t border-white/5"
+      >
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <h3 className="text-2xl font-semibold">Eric Lin</h3>
+          <p className="mt-4 text-sm">
+            © {new Date().getFullYear()} Eric Lin. Built with Next.js.
+          </p>
+        </div>
+      </footer>
+
       <div
         ref={previewRef}
         className={`pointer-events-none fixed left-0 top-0 z-50 hidden h-52 w-80 overflow-hidden rounded-xl border border-white/25 bg-zinc-900/80 shadow-2xl transition-all duration-200 ease-out md:block ${hoverPreview.visible ? "opacity-100" : "opacity-0"}`}
