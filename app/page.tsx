@@ -166,6 +166,10 @@ export default function Home() {
   const SHADOW_MIN_OPACITY = 0.24;
   const SHADOW_MAX_OPACITY = 0.72;
 
+  const TECH_CURVE_START_PERCENT = 70;
+  const TECH_CURVE_END_PERCENT = 100;
+  const TECH_CURVE_SCRUB = 0.6;
+
   const [isLoaderVisible, setIsLoaderVisible] = useState(true);
   const [fontsReady, setFontsReady] = useState(false);
   const [gradientReady, setGradientReady] = useState(false);
@@ -188,6 +192,9 @@ export default function Home() {
   const pathRef = useRef<SVGPathElement | null>(null);
   const shadowPathRef = useRef<SVGPathElement | null>(null);
   const fillPathRef = useRef<SVGPathElement | null>(null);
+  const invertedPathRef = useRef<SVGPathElement | null>(null);
+  const invertedShadowPathRef = useRef<SVGPathElement | null>(null);
+  const invertedFillPathRef = useRef<SVGPathElement | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const previewPosRef = useRef({ x: 0, y: 0 });
   const previewRafRef = useRef<number | null>(null);
@@ -207,6 +214,11 @@ export default function Home() {
     targetCurveAmount: 0,
     shadowOpacity: SHADOW_MIN_OPACITY,
   });
+  const invertedAnimationState = useRef({
+    curveAmount: 0,
+    targetCurveAmount: 0,
+    shadowOpacity: SHADOW_MIN_OPACITY,
+  });
   const [windowWidth, setWindowWidth] = useState(0);
 
   const handleGradientReady = useCallback(() => {
@@ -219,6 +231,10 @@ export default function Home() {
     if (previewRafRef.current !== null) {
       return;
     }
+    // Inverted curve scroll trigger settings (in percentages)
+    const TECH_CURVE_START_PERCENT = 50; // 0 = bottom of viewport, 50 = center, 100 = top
+    const TECH_CURVE_END_PERCENT = 50;
+    const TECH_CURVE_SCRUB = 0.6;
 
     previewRafRef.current = window.requestAnimationFrame(() => {
       previewRafRef.current = null;
@@ -374,6 +390,32 @@ export default function Home() {
     [windowWidth, CURVE_BASELINE_Y, DIVIDER_HEIGHT],
   );
 
+  const setInvertedPath = useCallback(
+    (curveAmount: number) => {
+      if (
+        !invertedPathRef.current ||
+        !invertedFillPathRef.current ||
+        !invertedShadowPathRef.current
+      )
+        return;
+      const width = windowWidth || window.innerWidth;
+
+      const invertedBaseline = 0;
+      const controlY = invertedBaseline + curveAmount;
+      const curvePath = `M0 ${invertedBaseline} Q${width / 2} ${controlY}, ${width} ${invertedBaseline}`;
+
+      invertedPathRef.current.setAttributeNS(null, "d", curvePath);
+      invertedShadowPathRef.current.setAttributeNS(null, "d", curvePath);
+
+      invertedFillPathRef.current.setAttributeNS(
+        null,
+        "d",
+        `M0 ${invertedBaseline} Q${width / 2} ${controlY}, ${width} ${invertedBaseline} L0 ${invertedBaseline} Z`,
+      );
+    },
+    [windowWidth],
+  );
+
   const updatePathForScroll = useCallback(
     (scrollProgress: number) => {
       animationState.current.targetCurveAmount = Math.min(
@@ -407,6 +449,48 @@ export default function Home() {
       setPath(animationState.current.curveAmount);
     },
     [setPath, MAX_CURVE_AMOUNT, SHADOW_MAX_OPACITY, SHADOW_MIN_OPACITY, lerp],
+  );
+
+  const updateInvertedPathForScroll = useCallback(
+    (scrollProgress: number) => {
+      const invertedProgress = 1 - scrollProgress;
+      invertedAnimationState.current.targetCurveAmount = Math.min(
+        invertedProgress * MAX_CURVE_AMOUNT,
+        MAX_CURVE_AMOUNT,
+      );
+
+      invertedAnimationState.current.curveAmount = lerp(
+        invertedAnimationState.current.curveAmount,
+        invertedAnimationState.current.targetCurveAmount,
+        0.35,
+      );
+
+      const targetShadowOpacity =
+        SHADOW_MIN_OPACITY +
+        (SHADOW_MAX_OPACITY - SHADOW_MIN_OPACITY) * invertedProgress;
+      invertedAnimationState.current.shadowOpacity = lerp(
+        invertedAnimationState.current.shadowOpacity,
+        targetShadowOpacity,
+        0.35,
+      );
+
+      if (invertedShadowPathRef.current) {
+        invertedShadowPathRef.current.setAttributeNS(
+          null,
+          "opacity",
+          invertedAnimationState.current.shadowOpacity.toFixed(3),
+        );
+      }
+
+      setInvertedPath(invertedAnimationState.current.curveAmount);
+    },
+    [
+      setInvertedPath,
+      MAX_CURVE_AMOUNT,
+      SHADOW_MAX_OPACITY,
+      SHADOW_MIN_OPACITY,
+      lerp,
+    ],
   );
 
   const gradientConfig = useMemo(
@@ -762,6 +846,32 @@ export default function Home() {
   }, [setPath, windowWidth]);
 
   useEffect(() => {
+    setInvertedPath(invertedAnimationState.current.curveAmount);
+  }, [setInvertedPath, windowWidth]);
+
+  useEffect(() => {
+    if (!techSectionRef.current) {
+      return;
+    }
+
+    const trigger = ScrollTrigger.create({
+      trigger: techSectionRef.current,
+      start: `top ${100 - TECH_CURVE_START_PERCENT}%`,
+      end: `bottom ${100 - TECH_CURVE_END_PERCENT}%`,
+      scrub: TECH_CURVE_SCRUB,
+      onUpdate: (self) => {
+        updateInvertedPathForScroll(self.progress);
+      },
+    });
+
+    updateInvertedPathForScroll(0);
+
+    return () => {
+      trigger.kill();
+    };
+  }, [updateInvertedPathForScroll]);
+
+  useEffect(() => {
     const preloadedImages = featuredWorks.map((project) => {
       const image = new Image();
       image.src = project.image;
@@ -782,7 +892,6 @@ export default function Home() {
       }
     };
   }, []);
-
   const steps = [
     { label: "Initializing page...", done: domReady },
     { label: "Loading fonts...", done: fontsReady },
@@ -1045,7 +1154,7 @@ export default function Home() {
           </section>
           <section
             ref={techSectionRef}
-            className={`min-h-screen w-full bg-black px-6 py-20 text-zinc-100 ${spaceGrotesk.className}`}
+            className={`relative min-h-screen w-full bg-black px-6 py-20 text-zinc-100 ${spaceGrotesk.className}`}
           >
             <div className="mr-auto ml-0 w-full max-w-5xl">
               <h2 className="text-left text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[-0.06em] text-zinc-100">
@@ -1202,6 +1311,53 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            <svg
+              className="pointer-events-none absolute left-0 z-20 w-full overflow-visible"
+              style={{
+                top: `100%`,
+                height: `${DIVIDER_HEIGHT}px`,
+                overflow: "visible",
+                display: "block",
+              }}
+              viewBox={`0 0 ${windowWidth || 1} ${DIVIDER_HEIGHT}`}
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <defs>
+                <filter
+                  id="inverted-curve-shadow"
+                  x="-20%"
+                  y="-80%"
+                  width="140%"
+                  height="220%"
+                >
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="11" />
+                </filter>
+              </defs>
+              <path
+                ref={invertedFillPathRef}
+                stroke="none"
+                fill={SECOND_SECTION_BG}
+                fillOpacity="1"
+              />
+              <path
+                ref={invertedShadowPathRef}
+                stroke="white"
+                strokeWidth="10"
+                fill="none"
+                strokeLinecap="round"
+                filter="url(#inverted-curve-shadow)"
+                opacity={SHADOW_MIN_OPACITY}
+              />
+              <path
+                ref={invertedPathRef}
+                stroke="none"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
           </section>
 
           <div aria-hidden="true" className="h-screen pointer-events-none" />
