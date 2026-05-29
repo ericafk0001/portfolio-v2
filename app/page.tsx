@@ -107,6 +107,7 @@ export default function Home() {
       { label: "Milanote", iconSrc: "/stack-icons/milanote.png" },
       { label: "Supabase", iconSrc: "/stack-icons/supabase.png" },
       { label: "Vercel", iconSrc: "/stack-icons/vercel.png" },
+      { label: "Google Cloud", iconSrc: "/stack-icons/cloud.png" },
     ],
     [],
   );
