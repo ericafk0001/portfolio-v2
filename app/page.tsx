@@ -24,6 +24,7 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { SplitText } from "gsap/SplitText";
 
 import { Loader } from "@/components/loader";
+import { InteractiveFooter } from "@/components/interactive-footer";
 
 const InteractiveGradFlow = dynamic(
   () =>
@@ -1361,21 +1362,9 @@ export default function Home() {
             </svg>
           </section>
 
-          <div aria-hidden="true" className="h-screen pointer-events-none" />
+          <InteractiveFooter />
         </div>
       </div>
-      <footer
-        id="site-footer"
-        className="fixed inset-x-0 bottom-0 min-h-screen bg-zinc-900 text-zinc-300 z-[-9] border-t border-white/5"
-      >
-        <div className="mx-auto max-w-6xl px-6 py-12">
-          <h3 className="text-2xl font-semibold">Eric Lin</h3>
-          <p className="mt-4 text-sm">
-            © {new Date().getFullYear()} Eric Lin. Built with Next.js.
-          </p>
-        </div>
-      </footer>
-
       <div
         ref={previewRef}
         className={`pointer-events-none fixed left-0 top-0 z-50 hidden h-52 w-80 overflow-hidden rounded-xl border border-white/25 bg-zinc-900/80 shadow-2xl transition-all duration-200 ease-out md:block ${hoverPreview.visible ? "opacity-100" : "opacity-0"}`}
