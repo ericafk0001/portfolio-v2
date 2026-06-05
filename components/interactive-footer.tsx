@@ -21,7 +21,7 @@ export function InteractiveFooter() {
 
     gsap.set(letters, {
       scaleY: 1,
-      transformOrigin: "50% 0%",
+      transformOrigin: "50% 100%",
       willChange: "transform",
     });
 
@@ -50,10 +50,10 @@ export function InteractiveFooter() {
           gsap.to(letter, {
             scaleY: 1,
             duration: 0.4,
-            ease: "elastic.out(1.2, 0.5)",
+            ease: "power2.out",
           });
           activeTimeoutsRef.current.delete(index);
-        }, 50);
+        }, 150);
 
         activeTimeoutsRef.current.set(index, timeout);
       };
@@ -86,7 +86,7 @@ export function InteractiveFooter() {
       className="w-full min-h-screen bg-zinc-900 text-zinc-300 border-t border-white/5 py-32 flex flex-col items-center justify-center"
     >
       <p className="mb-8 text-center text-lg text-zinc-400">Get in touch</p>
-      
+
       <h1 className="text-[clamp(8rem,20vw,25rem)] font-bold leading-none tracking-tight text-white select-none">
         {Array.from("CONTACT").map((letter, index) => (
           <span
@@ -102,7 +102,7 @@ export function InteractiveFooter() {
           </span>
         ))}
       </h1>
-      
+
       <p className="mt-8 text-center text-sm text-zinc-400">
         © {new Date().getFullYear()} Eric Lin. Built with Next.js.
       </p>
