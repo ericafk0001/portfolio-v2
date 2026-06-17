@@ -83,29 +83,34 @@ export function InteractiveFooter() {
   return (
     <div
       ref={footerRef}
-      className="w-full min-h-screen bg-zinc-900 text-zinc-300 border-t border-white/5 py-32 flex flex-col items-center justify-center"
+      className="grid w-full min-h-screen grid-rows-[1fr_auto] bg-zinc-900 text-zinc-300 border-t border-white/5 "
     >
-      <p className="mb-8 text-center text-lg text-zinc-400">Get in touch</p>
+      <div className="flex items-start justify-center">
+        <p className="text-lg text-zinc-400">Get in touch</p>
+      </div>
 
-      <h1 className="text-[clamp(8rem,20vw,25rem)] font-bold leading-none tracking-tight text-white select-none">
-        {Array.from("CONTACT").map((letter, index) => (
-          <span
-            key={index}
-            data-contact-letter
-            className="inline-block cursor-pointer"
-            style={{
-              display: "inline-block",
-              minWidth: "0.2em",
-            }}
-          >
-            {letter}
-          </span>
-        ))}
-      </h1>
-
-      <p className="mt-8 text-center text-sm text-zinc-400">
-        © {new Date().getFullYear()} Eric Lin. Built with Next.js.
-      </p>
+      <div className="flex w-full items-end justify-center overflow-visible">
+        <h1
+          className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,30rem)] font-bold leading-[0.78] tracking-[-0.07em] text-white select-none"
+          style={{
+            transform: "scaleY(1.5)",
+            transformOrigin: "center bottom",
+          }}
+        >
+          {Array.from("CONTACT").map((letter, index) => (
+            <span
+              key={index}
+              data-contact-letter
+              className="inline-block cursor-pointer"
+              style={{
+                display: "inline-block",
+              }}
+            >
+              {letter}
+            </span>
+          ))}
+        </h1>
+      </div>
     </div>
   );
 }
