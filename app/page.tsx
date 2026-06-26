@@ -204,6 +204,7 @@ export default function Home() {
   const moreProjectsButtonRef = useRef<HTMLAnchorElement | null>(null);
   const moreProjectsTextRef = useRef<HTMLSpanElement | null>(null);
   const moreProjectsRafRef = useRef<number | null>(null);
+  const resizeTimeoutRef = useRef<number | null>(null);
   const moreProjectsMotionRef = useRef({
     current: { x: 0, y: 0, rotation: 0, scale: 1 },
     target: { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -662,6 +663,7 @@ export default function Home() {
       trigger: secondSectionRef.current,
       start: "top bottom+=35%",
       end: "bottom top-=10%",
+      invalidateOnRefresh: true,
       onUpdate: (self) => {
         updatePathForScroll(self.progress);
       },
@@ -834,14 +836,39 @@ export default function Home() {
     setWindowWidth(window.innerWidth);
 
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
+      if (resizeTimeoutRef.current !== null) {
+        window.clearTimeout(resizeTimeoutRef.current);
+      }
+
+      resizeTimeoutRef.current = window.setTimeout(() => {
+        resizeTimeoutRef.current = null;
+        setWindowWidth(window.innerWidth);
+      }, 120);
     };
 
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
+      if (resizeTimeoutRef.current !== null) {
+        window.clearTimeout(resizeTimeoutRef.current);
+        resizeTimeoutRef.current = null;
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (windowWidth === 0) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [windowWidth]);
 
   useEffect(() => {
     setPath(animationState.current.curveAmount);
@@ -861,6 +888,7 @@ export default function Home() {
       start: `top ${100 - TECH_CURVE_START_PERCENT}%`,
       end: `bottom ${100 - TECH_CURVE_END_PERCENT}%`,
       scrub: TECH_CURVE_SCRUB,
+      invalidateOnRefresh: true,
       onUpdate: (self) => {
         updateInvertedPathForScroll(self.progress);
       },
