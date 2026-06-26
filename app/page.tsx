@@ -164,7 +164,7 @@ export default function Home() {
   const CURVE_BASELINE_Y = 300;
   const DIVIDER_HEIGHT = 480;
   const DIVIDER_OVERLAP = 180;
-  const MAX_CURVE_AMOUNT = 1400;
+  const MAX_CURVE_AMOUNT = 600;
   const SHADOW_MIN_OPACITY = 0.24;
   const SHADOW_MAX_OPACITY = 0.72;
 
