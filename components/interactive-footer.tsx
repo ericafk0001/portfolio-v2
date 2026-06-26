@@ -83,15 +83,15 @@ export function InteractiveFooter() {
   return (
     <div
       ref={footerRef}
-      className="grid w-full min-h-screen grid-rows-[1fr_auto] bg-zinc-900 text-zinc-300 border-t border-white/5 "
+      className="grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] bg-zinc-900 text-zinc-300 border-t border-white/5"
     >
-      <div className="flex items-start justify-center">
+      <div className="flex items-center justify-center">
         <p className="text-lg text-zinc-400">Get in touch</p>
       </div>
 
-      <div className="flex w-full items-end justify-center overflow-visible">
+      <div className="flex w-full items-center justify-center overflow-visible pb-[clamp(0.75rem,2vh,2rem)]">
         <h1
-          className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,30rem)] font-bold leading-[0.78] tracking-[-0.07em] text-white select-none"
+          className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,38rem)] font-bold leading-[0.78] tracking-[-0.07em] text-white select-none -ml-8 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
           style={{
             transform: "scaleY(1.5)",
             transformOrigin: "center bottom",
