@@ -1,16 +1,63 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
+import { Cal_Sans, Space_Grotesk } from "next/font/google";
+import type { IconType } from "react-icons";
+import { FaSquareXTwitter, FaGithub, FaDiscord } from "react-icons/fa6";
+import { FaLinkedin } from "react-icons/fa";
+import { IoLogoInstagram, IoCopyOutline } from "react-icons/io5";
+
+const CalSans = Cal_Sans({
+  weight: "400",
+  subsets: ["latin"],
+});
+
+const SpaceGrotesk = Space_Grotesk({
+  weight: "700",
+  subsets: ["latin"],
+});
+
+const contactEmail = "contactericlin@gmail.com";
+const socialLinks = [
+  {
+    label: "GitHub",
+    href: "https://github.com/ericafk0001",
+    icon: FaGithub,
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/eric_l.8",
+    icon: IoLogoInstagram,
+  },
+  {
+    label: "Linkedin",
+    href: "https://www.linkedin.com/in/eric-lin-b13baa393",
+    icon: FaLinkedin,
+  },
+  {
+    label: "X (Twitter)",
+    href: "https://x.com/eric_lin55757",
+    icon: FaSquareXTwitter,
+  },
+  {
+    label: "Discord",
+    href: "https://discord.com/users/1187851772828590174",
+    icon: FaDiscord,
+  },
+] satisfies Array<{ label: string; href: string; icon: IconType }>;
 
 export function InteractiveFooter() {
   const footerRef = useRef<HTMLDivElement>(null);
   const lettersRef = useRef<HTMLSpanElement[]>([]);
   const activeTimeoutsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
+  const [localTime, setLocalTime] = useState(() => new Date());
 
   useEffect(() => {
     if (!footerRef.current) return;
 
+    const activeTimeouts = activeTimeoutsRef.current;
     const letters = Array.from(
       footerRef.current.querySelectorAll<HTMLSpanElement>(
         "[data-contact-letter]",
@@ -21,16 +68,16 @@ export function InteractiveFooter() {
 
     gsap.set(letters, {
       scaleY: 1,
-      transformOrigin: "50% 100%",
+      transformOrigin: "50% 95%",
       willChange: "transform",
     });
 
     letters.forEach((letter, index) => {
       const handleMouseEnter = () => {
-        const existingTimeout = activeTimeoutsRef.current.get(index);
+        const existingTimeout = activeTimeouts.get(index);
         if (existingTimeout) {
           clearTimeout(existingTimeout);
-          activeTimeoutsRef.current.delete(index);
+          activeTimeouts.delete(index);
         }
 
         gsap.to(letter, {
@@ -41,7 +88,7 @@ export function InteractiveFooter() {
       };
 
       const handleMouseLeave = () => {
-        const existingTimeout = activeTimeoutsRef.current.get(index);
+        const existingTimeout = activeTimeouts.get(index);
         if (existingTimeout) {
           clearTimeout(existingTimeout);
         }
@@ -52,10 +99,10 @@ export function InteractiveFooter() {
             duration: 0.4,
             ease: "power2.out",
           });
-          activeTimeoutsRef.current.delete(index);
-        }, 150);
+          activeTimeouts.delete(index);
+        }, 67);
 
-        activeTimeoutsRef.current.set(index, timeout);
+        activeTimeouts.set(index, timeout);
       };
 
       letter.addEventListener("mouseenter", handleMouseEnter);
@@ -68,32 +115,122 @@ export function InteractiveFooter() {
     });
 
     return () => {
-      activeTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
-      activeTimeoutsRef.current.clear();
-
-      letters.forEach((letter, index) => {
-        const existingTimeout = activeTimeoutsRef.current.get(index);
-        if (existingTimeout) {
-          clearTimeout(existingTimeout);
-        }
-      });
+      activeTimeouts.forEach((timeout) => clearTimeout(timeout));
+      activeTimeouts.clear();
     };
   }, []);
+
+  useEffect(() => {
+    const updateLocalTime = () => {
+      setLocalTime(new Date());
+    };
+
+    updateLocalTime();
+
+    const intervalId = window.setInterval(updateLocalTime, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(contactEmail);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${contactEmail}`;
+    }
+  };
+
+  const localTimeText = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/New_York",
+  }).format(localTime);
+
+  const localDateText = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "America/New_York",
+  }).format(localTime);
 
   return (
     <div
       ref={footerRef}
-      className="grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] bg-zinc-900 text-zinc-300 border-t border-white/5"
+      className="grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] bg-zinc-900 text-zinc-300"
     >
-      <div className="flex items-center justify-center">
-        <p className="text-lg text-zinc-400">Get in touch</p>
+      <div className="grid gap-8 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="space-y-4">
+          <p
+            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+          >
+            Socials
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                aria-label={link.label}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
+                rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                className="group inline-flex h-16 w-16 items-center justify-center rounded-full transition duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
+              >
+                <link.icon
+                  aria-hidden="true"
+                  focusable="false"
+                  className="h-10 w-10 transition text-white duration-200 group-hover:opacity-100"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <p
+            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+          >
+            Email Me
+          </p>
+          <button
+            type="button"
+            onClick={handleCopyEmail}
+            className="inline-flex w-fit items-center rounded-full py-2 text-4xl text-white cursor-pointer transition duration-200 hover:opacity-75"
+          >
+            {copied ? "Copied!" : "Click to Copy"} &nbsp;
+            <IoCopyOutline />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <p
+            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+          >
+            Local Time
+          </p>
+          <p className="text-4xl text-white">
+            {localDateText},&nbsp;
+            {localTimeText}
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <p
+            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+          >
+            Version
+          </p>
+          <p className="text-4xl text-white">.v 2.0</p>
+        </div>
       </div>
 
       <div className="flex w-full items-center justify-center overflow-visible pb-[clamp(0.75rem,2vh,2rem)]">
         <h1
-          className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,38rem)] font-bold leading-[0.78] tracking-[-0.07em] text-white select-none -ml-8 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+          className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,40rem)] font-bold leading-[0.78] tracking-[-0.02em] text-white select-none -ml-8 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
           style={{
-            transform: "scaleY(1.5)",
+            transform: "scaleY(1.6)",
             transformOrigin: "center bottom",
           }}
         >
@@ -101,7 +238,7 @@ export function InteractiveFooter() {
             <span
               key={index}
               data-contact-letter
-              className="inline-block cursor-pointer"
+              className={`inline-block cursor-pointer ${CalSans.className}`}
               style={{
                 display: "inline-block",
               }}

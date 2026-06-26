@@ -983,6 +983,13 @@ export default function Home() {
                     >
                       Honors
                     </a>
+                    <span className="h-full w-px bg-white/20" />
+                    <a
+                      href="#"
+                      className="px-5 transition-colors hover:text-white"
+                    >
+                      Blog
+                    </a>
                   </nav>
                 </div>
 
@@ -1029,7 +1036,7 @@ export default function Home() {
             <main className="pointer-events-none relative z-10 flex min-h-screen w-full items-end">
               <div
                 ref={titleMaskRef}
-                className="relative z-20 ml-4 mr-20 md:mr-36 lg:mr-36 mb-8 overflow-hidden pt-[3em] pb-[2em]"
+                className="relative z-20 ml-4 mr-20 md:mr-36 lg:mr-36 mb-16 pt-[3em] pb-[2em]"
                 style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" }}
               >
                 <h1
