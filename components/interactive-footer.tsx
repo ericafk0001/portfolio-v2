@@ -48,6 +48,159 @@ const socialLinks = [
   },
 ] satisfies Array<{ label: string; href: string; icon: IconType }>;
 
+function MagneticWrapper({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    const inner = el.firstElementChild as HTMLElement | null;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+
+      gsap.to(el, {
+        x: dx * 0.35,
+        y: dy * 0.35,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+
+      if (inner) {
+        gsap.to(inner, {
+          x: dx * 0.2,
+          y: dy * 0.2,
+          duration: 0.4,
+          ease: "power2.out",
+        });
+      }
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.4)" });
+      if (inner) {
+        gsap.to(inner, {
+          x: 0,
+          y: 0,
+          duration: 0.5,
+          ease: "elastic.out(1, 0.4)",
+        });
+      }
+    };
+
+    el.addEventListener("mousemove", handleMouseMove);
+    el.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      el.removeEventListener("mousemove", handleMouseMove);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className={className}
+      style={{ display: "inline-flex" }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function CopyEmailButton({ email }: { email: string }) {
+  const [copied, setCopied] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const lineRef = useRef<HTMLSpanElement>(null);
+  const isHoveredRef = useRef(false);
+
+  useEffect(() => {
+    const btn = btnRef.current;
+    const line = lineRef.current;
+    if (!btn || !line) return;
+
+    gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
+
+    const handleMouseEnter = () => {
+      isHoveredRef.current = true;
+      gsap.to(line, {
+        clipPath: "inset(0 0% 0 0)",
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    };
+
+    const handleMouseLeave = () => {
+      isHoveredRef.current = false;
+      gsap.to(line, {
+        clipPath: "inset(0 0 0 100%)",
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
+        },
+      });
+    };
+
+    btn.addEventListener("mouseenter", handleMouseEnter);
+    btn.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      btn.removeEventListener("mouseenter", handleMouseEnter);
+      btn.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${email}`;
+    }
+  };
+
+  return (
+    <MagneticWrapper>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={handleCopy}
+        className="inline-flex w-fit items-center gap-2 rounded-full py-2 text-4xl text-white cursor-pointer transition-opacity duration-200 hover:opacity-75 relative"
+      >
+        <span className="relative">
+          {copied ? "Copied!" : "Click to Copy"}
+
+          <span
+            ref={lineRef}
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              height: "2px",
+              background: "white",
+              clipPath: "inset(0 100% 0 0)",
+            }}
+          />
+        </span>
+        <IoCopyOutline aria-hidden="true" />
+      </button>
+    </MagneticWrapper>
+  );
+}
+
 export function InteractiveFooter() {
   const footerRef = useRef<HTMLDivElement>(null);
   const lettersRef = useRef<HTMLSpanElement[]>([]);
@@ -161,29 +314,31 @@ export function InteractiveFooter() {
       ref={footerRef}
       className="grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] bg-zinc-900 text-zinc-300"
     >
-      <div className="grid gap-8 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-32 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
         <div className="space-y-4">
           <p
             className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
           >
             Socials
           </p>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {socialLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                aria-label={link.label}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                className="group inline-flex h-16 w-16 items-center justify-center rounded-full transition duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
-              >
-                <link.icon
-                  aria-hidden="true"
-                  focusable="false"
-                  className="h-10 w-10 transition text-white duration-200 group-hover:opacity-100"
-                />
-              </a>
+              <MagneticWrapper key={link.label}>
+                <a
+                  key={link.label}
+                  href={link.href}
+                  aria-label={link.label}
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                  className="group inline-flex h-16 w-16 items-center justify-center rounded-full transition duration-200 hover:border-white/20 hover:bg-white/10"
+                >
+                  <link.icon
+                    aria-hidden="true"
+                    focusable="false"
+                    className="h-10 w-10 transition text-white duration-200 group-hover:opacity-100"
+                  />
+                </a>
+              </MagneticWrapper>
             ))}
           </div>
         </div>
@@ -194,14 +349,7 @@ export function InteractiveFooter() {
           >
             Email Me
           </p>
-          <button
-            type="button"
-            onClick={handleCopyEmail}
-            className="inline-flex w-fit items-center rounded-full py-2 text-4xl text-white cursor-pointer transition duration-200 hover:opacity-75"
-          >
-            {copied ? "Copied!" : "Click to Copy"} &nbsp;
-            <IoCopyOutline />
-          </button>
+          <CopyEmailButton email={contactEmail} />
         </div>
 
         <div className="space-y-4">
