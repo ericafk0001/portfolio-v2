@@ -990,6 +990,13 @@ export default function Home() {
                     >
                       Blog
                     </a>
+                    <span className="h-full w-px bg-white/20" />
+                    <a
+                      href="#"
+                      className="px-5 transition-colors hover:text-white"
+                    >
+                      Resume
+                    </a>
                   </nav>
                 </div>
 
@@ -1013,16 +1020,9 @@ export default function Home() {
 
                   <button
                     type="button"
-                    className="hidden items-center gap-2 border border-zinc-700 bg-zinc-800 px-3 py-2 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-zinc-100 transition-colors hover:bg-zinc-700 md:inline-flex"
+                    className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-100 transition-colors hover:bg-zinc-700 md:inline-flex"
                   >
                     Contact
-                    <span className="inline-flex h-4 w-4 items-center justify-center border border-zinc-600 bg-zinc-700 text-[0.55rem] leading-none text-zinc-200">
-                      <img
-                        src="images/ArrowUpRight.svg"
-                        alt="Arrow Up Right Icon"
-                        className="h-6 w-6"
-                      />
-                    </span>
                   </button>
                 </div>
               </div>

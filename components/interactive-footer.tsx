@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { gsap } from "gsap";
 import { Cal_Sans, Space_Grotesk } from "next/font/google";
 import type { IconType } from "react-icons";
 import { FaSquareXTwitter, FaGithub, FaDiscord } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
 import { IoLogoInstagram, IoCopyOutline } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 const CalSans = Cal_Sans({
   weight: "400",
@@ -123,6 +123,9 @@ function CopyEmailButton({ email }: { email: string }) {
   const btnRef = useRef<HTMLButtonElement>(null);
   const lineRef = useRef<HTMLSpanElement>(null);
   const isHoveredRef = useRef(false);
+  const defaultTextRef = useRef<HTMLSpanElement>(null);
+  const copiedTextRef = useRef<HTMLSpanElement>(null);
+  const isCopiedRef = useRef(false);
 
   useEffect(() => {
     const btn = btnRef.current;
@@ -160,14 +163,49 @@ function CopyEmailButton({ email }: { email: string }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (copiedTextRef.current) {
+      gsap.set(copiedTextRef.current, { y: "100%" });
+    }
+  }, []);
+
   const handleCopy = async () => {
+    if (isCopiedRef.current) return;
+
     try {
       await navigator.clipboard.writeText(email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
       window.location.href = `mailto:${email}`;
     }
+
+    isCopiedRef.current = true;
+
+    gsap.to(defaultTextRef.current, {
+      y: "-100%",
+      duration: 0.4,
+      ease: "power3.out",
+    });
+    gsap.to(copiedTextRef.current, {
+      y: "0%",
+      duration: 0.4,
+      ease: "power3.out",
+    });
+
+    setTimeout(() => {
+      gsap.to(defaultTextRef.current, {
+        y: "0%",
+        duration: 0.4,
+        ease: "power3.inOut",
+      });
+      gsap.to(copiedTextRef.current, {
+        y: "100%",
+        duration: 0.4,
+        ease: "power3.inOut",
+        onComplete: () => {
+          isCopiedRef.current = false;
+        },
+      });
+    }, 2000);
   };
 
   return (
@@ -178,9 +216,10 @@ function CopyEmailButton({ email }: { email: string }) {
         onClick={handleCopy}
         className="inline-flex w-fit items-center gap-2 rounded-full py-2 text-4xl text-white cursor-pointer transition-opacity duration-200 hover:opacity-75 relative"
       >
-        <span className="relative">
-          {copied ? "Copied!" : "Click to Copy"}
-
+        <span
+          className="relative overflow-hidden"
+          style={{ display: "inline-block" }}
+        >
           <span
             ref={lineRef}
             aria-hidden="true"
@@ -189,12 +228,36 @@ function CopyEmailButton({ email }: { email: string }) {
               bottom: 0,
               left: 0,
               width: "100%",
-              height: "2px",
+              height: "4px",
               background: "white",
               clipPath: "inset(0 100% 0 0)",
+              zIndex: 1,
             }}
           />
+
+          <span
+            ref={defaultTextRef}
+            style={{ display: "block", willChange: "transform" }}
+          >
+            Click to Copy
+          </span>
+
+          <span
+            ref={copiedTextRef}
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              display: "block",
+              willChange: "transform",
+            }}
+          >
+            Copied!
+          </span>
         </span>
+
         <IoCopyOutline aria-hidden="true" />
       </button>
     </MagneticWrapper>
@@ -309,6 +372,8 @@ export function InteractiveFooter() {
     timeZone: "America/New_York",
   }).format(localTime);
 
+  const router = useRouter();
+
   return (
     <div
       ref={footerRef}
@@ -384,6 +449,7 @@ export function InteractiveFooter() {
         >
           {Array.from("CONTACT").map((letter, index) => (
             <span
+              onClick={() => router.push("/contact")}
               key={index}
               data-contact-letter
               className={`inline-block cursor-pointer ${CalSans.className}`}
