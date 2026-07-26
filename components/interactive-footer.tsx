@@ -20,6 +20,15 @@ const SpaceGrotesk = Space_Grotesk({
 });
 
 const contactEmail = "contactericlin@gmail.com";
+const starField = Array.from({ length: 90 }, (_, index) => {
+  const left = (index * 13.7) % 100;
+  const top = (index * 19.1) % 100;
+  const size = 1 + (index % 4) * 0.8;
+  const delay = (index % 8) * 0.35;
+  const duration = 2.2 + (index % 5) * 0.8;
+
+  return { left, top, size, delay, duration };
+});
 const socialLinks = [
   {
     label: "GitHub",
@@ -377,9 +386,28 @@ export function InteractiveFooter() {
   return (
     <div
       ref={footerRef}
-      className="grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] bg-zinc-900 text-zinc-300"
+      className="relative grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] overflow-hidden bg-[#010208] text-zinc-300"
     >
-      <div className="grid gap-32 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.15),_transparent_60%)]" />
+        {starField.map((star, index) => (
+          <span
+            key={index}
+            className="absolute rounded-full"
+            style={{
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              boxShadow: `0 0 ${star.size * 2.5}px rgba(255, 255, 255, 0.7)`,
+              animation: `twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 grid gap-32 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
         <div className="space-y-4">
           <p
             className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
@@ -439,7 +467,7 @@ export function InteractiveFooter() {
         </div>
       </div>
 
-      <div className="flex w-full items-center justify-center overflow-visible pb-[clamp(0.75rem,2vh,2rem)]">
+      <div className="relative z-10 flex w-full items-center justify-center overflow-visible pb-[clamp(0.75rem,2vh,2rem)]">
         <h1
           className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,40rem)] font-bold leading-[0.78] tracking-[-0.02em] text-white select-none -ml-8 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
           style={{
@@ -462,6 +490,20 @@ export function InteractiveFooter() {
           ))}
         </h1>
       </div>
+
+      <style jsx global>{`
+        @keyframes twinkle {
+          0%,
+          100% {
+            opacity: 0.2;
+            transform: scale(0.8);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+          }
+        }
+      `}</style>
     </div>
   );
 }
