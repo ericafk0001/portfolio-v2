@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Boldonse } from "next/font/google";
+import { Boldonse, Montserrat } from "next/font/google";
 import { Stalinist_One } from "next/font/google";
 import "./globals.css";
 
@@ -25,6 +25,13 @@ const boldonse = Boldonse({
   weight: "400",
   subsets: ["latin"],
 });
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  weight: "400",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Eric Lin's Portfolio",
   description: "The one and only Eric Lin!!!",
@@ -38,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${stalinistOne.variable} ${boldonse.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${stalinistOne.variable} ${boldonse.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-(family-name:--font-geist-mono) bg-black text-zinc-100">
         {children}

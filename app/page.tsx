@@ -9,7 +9,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import dynamic from "next/dynamic";
-import { Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, Montserrat } from "next/font/google";
 
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -35,6 +35,12 @@ const InteractiveGradFlow = dynamic(
 );
 
 const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -126,6 +132,7 @@ export default function Home() {
       { label: "Socket.io", iconSrc: "/stack-icons/socket-io.png" },
       { label: "Locomotive", iconSrc: "/stack-icons/locomotive.png" },
       { label: "Framer Motion", iconSrc: "/stack-icons/framer-motion.svg" },
+      { label: "GSAP", iconSrc: "/stack-icons/gsap.png" },
     ],
     [],
   );
@@ -961,7 +968,7 @@ export default function Home() {
                     ERIC LIN
                   </a>
                   <span className="mx-3 h-16 w-px bg-white/20" />
-                  <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-geist-mono) text-zinc-300 lg:flex">
+                  <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
                     <a
                       href="#"
                       className="px-5 transition-colors hover:text-white"
@@ -1020,7 +1027,7 @@ export default function Home() {
 
                   <button
                     type="button"
-                    className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-100 transition-colors hover:bg-zinc-700 md:inline-flex"
+                    className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 transition-colors hover:bg-zinc-700 md:inline-flex"
                   >
                     Contact
                   </button>
