@@ -7,6 +7,7 @@ import type { IconType } from "react-icons";
 import { FaSquareXTwitter, FaGithub, FaDiscord } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
 import { IoLogoInstagram, IoCopyOutline } from "react-icons/io5";
+
 import { useRouter } from "next/navigation";
 
 const CalSans = Cal_Sans({
