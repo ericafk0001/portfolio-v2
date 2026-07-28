@@ -8,7 +8,7 @@ function ContactForm() {
   const [state, handleSubmit] = useForm("myzyjzge");
   if (state.succeeded) {
     return (
-      <div className="min-h-screen bg-[#0b0b0f] px-6 py-16 text-[#f4f1ea] sm:px-10 lg:px-16">
+      <div className="min-h-screen bg-[#000000] px-6 py-16 text-[#f4f1ea] sm:px-10 lg:px-16">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
           <h1 className="text-xl font-semibold tracking-tight text-[#f4f1ea] sm:text-6xl lg:text-10xl">
             Let&apos;s Talk!
@@ -21,7 +21,7 @@ function ContactForm() {
     );
   }
   return (
-    <div className="min-h-screen bg-[#0b0b0f] px-6 py-16 text-[#f4f1ea] sm:px-10 lg:px-16">
+    <div className="min-h-screen bg-[#000000] px-6 py-16 text-[#f4f1ea] sm:px-10 lg:px-16">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
         <h1 className="text-6xl font-semibold tracking-tight text-[#f4f1ea] sm:text-[8rem] lg:text-[10rem]">
           Let&apos;s Talk!
@@ -38,7 +38,7 @@ function ContactForm() {
                 name="name"
                 type="text"
                 placeholder="What's Your Name*"
-                className="h-16 rounded-2xl border border-white bg-[#111117] px-5 text-lg text-[#f4f1ea] outline-none transition placeholder:text-[#8f867c] focus:border-[#851c1d] focus:ring-2 focus:ring-[#851c1d]/25"
+                className="h-16 rounded-2xl border border-white bg-[#111111] px-5 text-lg text-[#f4f1ea] outline-none transition placeholder:text-[#8f867c] focus:border-white focus:ring-2 focus:ring-white/75"
               />
             </label>
 
@@ -51,7 +51,7 @@ function ContactForm() {
                 type="email"
                 name="email"
                 placeholder="What's Your Email*"
-                className="h-16 rounded-2xl border border-white bg-[#111117] px-5 text-lg text-[#f4f1ea] outline-none transition placeholder:text-[#8f867c] focus:border-[#851c1d] focus:ring-2 focus:ring-[#851c1d]/25"
+                className="h-16 rounded-2xl border border-white bg-[#111111] px-5 text-lg text-[#f4f1ea] outline-none transition placeholder:text-[#8f867c] focus:border-white focus:ring-2 focus:ring-white/75"
               />
               <ValidationError
                 prefix="Email"
@@ -69,7 +69,7 @@ function ContactForm() {
                 name="message"
                 placeholder="It is my earnest inclination to inaugurate a discourse concerning the prospective bestowal of a domesticated specimen belonging to the Felis catus taxonomic classification unto your esteemed personage..."
                 rows={10}
-                className="min-h-72 rounded-2xl border border-white bg-[#111117] px-5 py-4 text-lg text-[#f4f1ea] outline-none transition placeholder:text-[#8f867c] focus:border-[#851c1d] focus:ring-2 focus:ring-[#851c1d]/25"
+                className="min-h-72 rounded-2xl border border-white bg-[#111111] px-5 py-4 text-lg text-[#f4f1ea] outline-none transition placeholder:text-[#8f867c] focus:border-white focus:ring-2 focus:ring-white/75"
               />
               <ValidationError
                 prefix="Message"
@@ -83,7 +83,7 @@ function ContactForm() {
             <button
               type="submit"
               disabled={state.submitting}
-              className="flex h-28 w-28 items-center justify-center bg-[#851c1d] text-[4rem] font-semibold text-white transition hover:bg-[#6d1f20] disabled:cursor-not-allowed disabled:opacity-70 sm:h-32 sm:w-32"
+              className="flex h-28 w-28 items-center justify-center bg-[#181818] text-[4rem] font-semibold text-white transition hover:scale-110 disabled:cursor-not-allowed disabled:opacity-70 sm:h-32 sm:w-32"
             >
               <RiSendInsFill />
             </button>
