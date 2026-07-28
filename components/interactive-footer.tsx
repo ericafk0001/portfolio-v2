@@ -228,7 +228,7 @@ function CopyEmailButton({ email }: { email: string }) {
       >
         <span
           className="relative overflow-hidden"
-          style={{ display: "inline-block" }}
+          style={{ display: "inline-grid" }}
         >
           <span
             ref={lineRef}
@@ -247,7 +247,12 @@ function CopyEmailButton({ email }: { email: string }) {
 
           <span
             ref={defaultTextRef}
-            style={{ display: "block", willChange: "transform" }}
+            style={{
+              display: "block",
+              willChange: "transform",
+              gridArea: "1/1",
+              whiteSpace: "nowrap",
+            }}
           >
             Click to Copy
           </span>
@@ -256,12 +261,10 @@ function CopyEmailButton({ email }: { email: string }) {
             ref={copiedTextRef}
             aria-hidden="true"
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
               display: "block",
               willChange: "transform",
+              gridArea: "1/1",
+              whiteSpace: "nowrap",
             }}
           >
             Copied!
