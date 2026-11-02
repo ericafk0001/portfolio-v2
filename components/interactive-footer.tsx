@@ -342,7 +342,7 @@ function ResumeLink() {
             className="absolute bottom-0 left-0 z-[1] h-1 w-full bg-white"
             style={{ clipPath: "inset(0 100% 0 0)" }}
           />
-          Resume
+          Résumé
         </span>
         <IoArrowUpOutline
           aria-hidden="true"

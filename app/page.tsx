@@ -1009,29 +1009,13 @@ export default function Home() {
                 </div>
 
                 <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
-                  <button
+                  <a
                     type="button"
-                    className="hidden md:flex gap-2 items-center text-red-500"
-                  >
-                    Night Mode
-                    <span
-                      aria-hidden="true"
-                      className="inline-flex h-4 w-4 items-center justify-center text-xs leading-none"
-                    >
-                      <img
-                        src="images/Crosshair.svg"
-                        alt="Crosshair Icon"
-                        className="h-6 w-6"
-                      />
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 transition-colors hover:bg-zinc-700 md:inline-flex"
+                    href="contact"
+                    className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 transition-colors hover:bg-transparent hover:text-white md:inline-flex"
                   >
                     Contact
-                  </button>
+                  </a>
                 </div>
               </div>
             </header>
@@ -1174,7 +1158,7 @@ export default function Home() {
           >
             <p
               ref={thirdSectionTextRef}
-              className={`w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] font-medium leading-[0.98] tracking-[-0.06em] text-zinc-200 ${spaceGrotesk.className}`}
+              className={`w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 ${spaceGrotesk.className}`}
             >
               {thirdSectionWords.flatMap((word, wordIndex) => {
                 const isLastWord = wordIndex === thirdSectionWords.length - 1;
