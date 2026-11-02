@@ -6,7 +6,11 @@ import { Cal_Sans, Space_Grotesk } from "next/font/google";
 import type { IconType } from "react-icons";
 import { FaSquareXTwitter, FaGithub, FaDiscord } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
-import { IoLogoInstagram, IoCopyOutline } from "react-icons/io5";
+import {
+  IoLogoInstagram,
+  IoCopyOutline,
+  IoArrowUpOutline,
+} from "react-icons/io5";
 
 import { useRouter } from "next/navigation";
 
@@ -270,9 +274,73 @@ function CopyEmailButton({ email }: { email: string }) {
             Copied!
           </span>
         </span>
-
         <IoCopyOutline aria-hidden="true" />
       </button>
+    </MagneticWrapper>
+  );
+}
+
+function ResumeLink() {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const lineRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const link = linkRef.current;
+    const line = lineRef.current;
+    if (!link || !line) return;
+
+    gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
+
+    const handleMouseEnter = () => {
+      gsap.to(line, {
+        clipPath: "inset(0 0% 0 0)",
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(line, {
+        clipPath: "inset(0 0 0 100%)",
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
+        },
+      });
+    };
+
+    link.addEventListener("mouseenter", handleMouseEnter);
+    link.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      link.removeEventListener("mouseenter", handleMouseEnter);
+      link.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return (
+    <MagneticWrapper>
+      <a
+        ref={linkRef}
+        href="/resume.pdf"
+        target="_blank"
+        rel="noreferrer"
+        className="group inline-flex w-fit items-center gap-2 rounded-full py-2 text-4xl text-white transition-opacity duration-200 hover:opacity-75"
+      >
+        <span className="relative inline-grid">
+          <span
+            ref={lineRef}
+            aria-hidden="true"
+            className="absolute bottom-0 left-0 z-[1] h-1 w-full bg-white"
+            style={{ clipPath: "inset(0 100% 0 0)" }}
+          />
+          Resume
+        </span>
+        <IoArrowUpOutline
+          aria-hidden="true"
+          className="h-9 w-9 rotate-45 transition-transform duration-200 group-hover:-translate-y-1 group-hover:translate-x-1"
+        />
+      </a>
     </MagneticWrapper>
   );
 }
@@ -447,6 +515,7 @@ export function InteractiveFooter() {
             Email Me
           </p>
           <CopyEmailButton email={contactEmail} />
+          <ResumeLink />
         </div>
 
         <div className="space-y-4">

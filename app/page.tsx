@@ -999,7 +999,8 @@ export default function Home() {
                     </a>
                     <span className="h-full w-px bg-white/20" />
                     <a
-                      href="#"
+                      href="/resume.pdf"
+                      target="_blank"
                       className="px-5 transition-colors hover:text-white"
                     >
                       Resume
