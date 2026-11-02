@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Cal_Sans, Space_Grotesk } from "next/font/google";
 import type { IconType } from "react-icons";
 import { FaSquareXTwitter, FaGithub, FaDiscord } from "react-icons/fa6";
@@ -462,6 +463,17 @@ export function InteractiveFooter() {
 
   const router = useRouter();
 
+  const handleBackToTop = () => {
+    const smoother = ScrollSmoother.get();
+
+    if (smoother) {
+      smoother.scrollTo(0, true);
+      return;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div
       ref={footerRef}
@@ -583,6 +595,21 @@ export function InteractiveFooter() {
             </span>
           ))}
         </h1>
+      </div>
+
+      <div className="absolute bottom-0 right-1 z-20 h-24 w-56 sm:right-4">
+        <button
+          type="button"
+          onClick={handleBackToTop}
+          aria-label="Back to top"
+          className="group absolute bottom-3 right-4 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-white/70 transition-colors duration-200 hover:text-white sm:bottom-5 sm:right-4"
+        >
+          <span>Back to top</span>
+          <IoArrowUpOutline
+            aria-hidden="true"
+            className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1"
+          />
+        </button>
       </div>
 
       <style jsx global>{`
