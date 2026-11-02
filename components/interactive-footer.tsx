@@ -34,6 +34,13 @@ const starField = Array.from({ length: 90 }, (_, index) => {
 
   return { left, top, size, delay, duration };
 });
+const shootingStarField = [
+  { left: "7%", top: "18%", angle: -32, delay: "1.5s", duration: "7.5s" },
+  { left: "42%", top: "8%", angle: -38, delay: "4.8s", duration: "9s" },
+  { left: "76%", top: "28%", angle: -28, delay: "8.2s", duration: "8s" },
+  { left: "23%", top: "54%", angle: -42, delay: "12s", duration: "10s" },
+  { left: "88%", top: "66%", angle: -35, delay: "15.5s", duration: "8.5s" },
+] as const;
 const socialLinks = [
   {
     label: "GitHub",
@@ -477,6 +484,20 @@ export function InteractiveFooter() {
             }}
           />
         ))}
+        {shootingStarField.map((star, index) => (
+          <span
+            key={`shooting-star-${index}`}
+            aria-hidden="true"
+            className="shooting-star"
+            style={{
+              left: star.left,
+              top: star.top,
+              rotate: `${-star.angle}deg`,
+              animationDelay: star.delay,
+              animationDuration: star.duration,
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative z-10 grid gap-32 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
@@ -574,6 +595,101 @@ export function InteractiveFooter() {
           50% {
             opacity: 1;
             transform: scale(1.2);
+          }
+        }
+
+        .shooting-star {
+          position: absolute;
+          width: 0.35rem;
+          height: 0.35rem;
+          border-radius: 9999px;
+          background: #fff;
+          box-shadow:
+            0 0 0.45rem 0.1rem rgba(255, 255, 255, 0.95),
+            0 0 1.25rem 0.25rem rgba(179, 214, 255, 0.55);
+          animation: shooting-star 9s linear infinite both;
+          opacity: 0;
+        }
+
+        .shooting-star::before,
+        .shooting-star::after {
+          position: absolute;
+          right: 0.1rem;
+          bottom: 50%;
+          display: block;
+          height: 1px;
+          content: "";
+          transform-origin: right center;
+          transform: translateY(50%);
+          pointer-events: none;
+          -webkit-mask-image: linear-gradient(
+            90deg,
+            transparent,
+            #000 18%,
+            #000 68%,
+            transparent
+          );
+          mask-image: linear-gradient(
+            90deg,
+            transparent,
+            #000 18%,
+            #000 68%,
+            transparent
+          );
+        }
+
+        .shooting-star::before {
+          width: clamp(5rem, 13vw, 12rem);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(182, 214, 255, 0.18) 45%,
+            rgba(255, 255, 255, 0.85)
+          );
+          filter: blur(1px);
+        }
+
+        .shooting-star::after {
+          width: clamp(2.5rem, 7vw, 6rem);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.95)
+          );
+          filter: blur(0.5px);
+        }
+
+        @keyframes shooting-star {
+          0% {
+            opacity: 0;
+            transform: translateX(2rem) scale(0.55);
+          }
+          7% {
+            opacity: 1;
+          }
+          18% {
+            opacity: 0.95;
+            transform: translateX(5rem) scale(1);
+          }
+          58% {
+            opacity: 0.8;
+          }
+          78% {
+            opacity: 0.45;
+          }
+          92% {
+            opacity: 0.16;
+          }
+          100% {
+            opacity: 0.1;
+            transform: translateX(34rem) scale(0.35);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .shooting-star {
+            animation: none;
+            opacity: 0;
           }
         }
       `}</style>
