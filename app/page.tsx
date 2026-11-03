@@ -970,7 +970,7 @@ export default function Home() {
                   <span className="mx-3 h-16 w-px bg-white/20" />
                   <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
                     <a
-                      href="#"
+                      href="/about"
                       className="px-5 transition-colors hover:text-white"
                     >
                       About
@@ -1042,6 +1042,7 @@ export default function Home() {
           </div>
           <section
             ref={secondSectionRef}
+            id="featured-works"
             className={`relative min-h-screen w-full overflow-visible bg-black text-zinc-100 ${spaceGrotesk.className}`}
             style={{ backgroundColor: SECOND_SECTION_BG }}
           >
