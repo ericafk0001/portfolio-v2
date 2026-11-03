@@ -57,9 +57,9 @@ export default function AboutPage() {
                 </a>{" "}
                 wanting to pursue a field in{" "}
                 <strong>computer science and artificial intelligence</strong>. I
-                was born in Brooklyn, went back and forth from the Bronx and
-                Brooklyn, moved to Fuzhou, came back to Brooklyn, and now living
-                in Philadelphia.
+                was born in Brooklyn, moved to Fuzhou, came back to the States
+                and went back and forth from the Bronx and Brooklyn, and now
+                living in Philadelphia.
               </p>
 
               <p>
