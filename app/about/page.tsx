@@ -92,9 +92,9 @@ export default function AboutPage() {
               </p>
 
               <p>
-                When I&apos;m away from screens, I love playing basketball,
-                badminton, hiking, cooking, long walks at the park, and going to
-                cat cafes.
+                When I&apos;m away from screens, I love playing basketball and
+                badminton, hiking, cooking, taking long walks at the park, and
+                going to cat cafes.
               </p>
 
               <p>
