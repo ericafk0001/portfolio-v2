@@ -74,18 +74,24 @@ export default function Home() {
       {
         title: "Death Note Mod",
         period: "Jan 2025 - Present",
+        description:
+          "An interactive Death Note-inspired mod with custom visuals, animations, and game logic.",
         href: "#",
         image: "images/deathnote.webp",
       },
       {
         title: "Anime identifier",
         period: "Nov 2024 - Nov 2024",
+        description:
+          "An image recognition tool that identifies anime characters along with the series they appear in.",
         href: "#",
         image: "images/anime.png",
       },
       {
         title: "PocketDoc",
         period: "April 2026 - April 2026",
+        description:
+          "A pocket-sized document tool built to keep files organized and easy to access on the go.",
         href: "#",
         image: "images/pocketdoc.png",
       },
@@ -697,14 +703,13 @@ export default function Home() {
   }, [updatePathForScroll]);
 
   useEffect(() => {
-    if (!thirdSectionRef.current || !thirdSectionTextRef.current) {
+    const text = thirdSectionTextRef.current;
+    if (!text) {
       return;
     }
 
     const letters = Array.from(
-      thirdSectionTextRef.current.querySelectorAll<HTMLElement>(
-        "[data-letter]",
-      ),
+      text.querySelectorAll<HTMLElement>("[data-letter]"),
     );
 
     if (letters.length === 0) {
@@ -740,8 +745,10 @@ export default function Home() {
           from: "start",
         },
         scrollTrigger: {
-          trigger: thirdSectionRef.current,
-          start: "top 110%",
+          // Trigger on the paragraph itself so the reveal stays tied to the
+          // text the user is looking at, regardless of section padding.
+          trigger: text,
+          start: "top 90%",
           end: "center center",
           scrub: 0.9,
         },
@@ -1150,7 +1157,28 @@ export default function Home() {
                       }));
                     }}
                   >
-                    <div className="flex items-center justify-between gap-6">
+                    <div className="md:hidden">
+                      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-white/10 bg-zinc-900">
+                        <img
+                          src={project.image}
+                          alt={`${project.title} preview`}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                      <h3 className="mt-4 text-xl leading-tight tracking-[-0.04em] text-zinc-100">
+                        {project.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                        {project.description}
+                      </p>
+                      <p className="mt-3 text-xs tracking-[0.16em] text-zinc-500 uppercase">
+                        {project.period}
+                      </p>
+                    </div>
+
+                    <div className="hidden items-center justify-between gap-6 md:flex">
                       <span className="text-[clamp(1.25rem,1.7vw,2rem)] leading-tight tracking-[-0.04em] text-zinc-100 transition-all duration-300 ease-out group-hover:translate-x-2 group-hover:text-white">
                         {project.title}
                       </span>
@@ -1183,7 +1211,7 @@ export default function Home() {
           </section>
           <section
             ref={thirdSectionRef}
-            className="pb-150 flex max-h-[20vh] w-full items-center justify-center bg-black px-6 text-center text-zinc-100"
+            className="flex w-full items-center justify-center bg-black px-6 pt-24 pb-24 text-center text-zinc-100 md:pt-0 md:pb-40"
           >
             <p
               ref={thirdSectionTextRef}

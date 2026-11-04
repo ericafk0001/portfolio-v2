@@ -212,7 +212,7 @@ function CopyEmailButton({ email }: { email: string }) {
       <button
         type="button"
         onClick={handleCopy}
-        className="group relative inline-flex w-fit cursor-pointer items-center gap-2 rounded-full py-2 text-4xl text-white transition-opacity duration-200 hover:opacity-75"
+        className="group relative inline-flex w-fit cursor-pointer items-center gap-2 rounded-full py-2 text-2xl text-white transition-opacity duration-200 hover:opacity-75 sm:text-4xl"
       >
         <span
           className="relative overflow-hidden"
@@ -261,7 +261,7 @@ function ResumeLink() {
         href="/resume.pdf"
         target="_blank"
         rel="noreferrer"
-        className="group inline-flex w-fit items-center gap-2 rounded-full py-2 text-4xl text-white transition-opacity duration-200 hover:opacity-75"
+        className="group inline-flex w-fit items-center gap-2 rounded-full py-2 text-2xl text-white transition-opacity duration-200 hover:opacity-75 sm:text-4xl"
       >
         <span className="relative inline-grid">
           <span
@@ -272,7 +272,7 @@ function ResumeLink() {
         </span>
         <IoArrowUpOutline
           aria-hidden="true"
-          className="h-9 w-9 rotate-45 transition-transform duration-200 group-hover:-translate-y-1 group-hover:translate-x-1"
+          className="h-6 w-6 rotate-45 transition-transform duration-200 group-hover:-translate-y-1 group-hover:translate-x-1 sm:h-9 sm:w-9"
         />
       </a>
     </MagneticWrapper>
@@ -428,6 +428,16 @@ export function InteractiveFooter() {
       willChange: "transform",
     });
 
+    // Hover effects only make sense on devices with a real pointer. On touch
+    // screens a tap fires mouseenter without a matching mouseleave, which
+    // leaves letters stuck in the squashed state.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      return () => {
+        activeTimeouts.forEach((timeout) => clearTimeout(timeout));
+        activeTimeouts.clear();
+      };
+    }
+
     letters.forEach((letter, index) => {
       const handleMouseEnter = () => {
         const existingTimeout = activeTimeouts.get(index);
@@ -533,7 +543,7 @@ export function InteractiveFooter() {
   return (
     <div
       ref={footerRef}
-      className="relative grid w-full min-h-screen grid-rows-[minmax(6rem,1fr)_auto] overflow-hidden bg-[#010208] text-zinc-300"
+      className="relative grid min-h-svh w-full grid-rows-[minmax(6rem,1fr)_auto] overflow-hidden bg-[#010208] text-zinc-300"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.15),_transparent_60%)]" />
@@ -568,14 +578,14 @@ export function InteractiveFooter() {
         ))}
       </div>
 
-      <div className="relative z-10 grid gap-32 px-6 py-10 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="relative z-10 grid gap-8 px-5 py-8 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 sm:px-6 sm:py-10 lg:px-10 xl:grid-cols-4 xl:gap-x-16">
         <div className="space-y-4">
           <p
-            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
           >
             Socials
           </p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {socialLinks.map((link) => (
               <MagneticWrapper key={link.label}>
                 <a
@@ -584,12 +594,12 @@ export function InteractiveFooter() {
                   aria-label={link.label}
                   target={link.href.startsWith("http") ? "_blank" : undefined}
                   rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                  className="group inline-flex h-16 w-16 items-center justify-center rounded-full transition duration-200 hover:border-white/20 hover:bg-white/10"
+                  className="group inline-flex h-14 w-14 items-center justify-center rounded-full transition duration-200 hover:border-white/20 hover:bg-white/10 sm:h-16 sm:w-16"
                 >
                   <link.icon
                     aria-hidden="true"
                     focusable="false"
-                    className="h-10 w-10 transition text-white duration-200 group-hover:opacity-100"
+                    className="h-9 w-9 text-white transition duration-200 group-hover:opacity-100 sm:h-10 sm:w-10"
                   />
                 </a>
               </MagneticWrapper>
@@ -599,21 +609,23 @@ export function InteractiveFooter() {
 
         <div className="space-y-4">
           <p
-            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
           >
             Email Me
           </p>
-          <CopyEmailButton email={contactEmail} />
-          <ResumeLink />
+          <div className="flex flex-col items-start gap-1">
+            <CopyEmailButton email={contactEmail} />
+            <ResumeLink />
+          </div>
         </div>
 
         <div className="space-y-4">
           <p
-            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
           >
             Local Time
           </p>
-          <p className="text-4xl text-white">
+          <p className="text-2xl text-white sm:text-4xl">
             {localDateText},&nbsp;
             {localTimeText}
           </p>
@@ -621,7 +633,7 @@ export function InteractiveFooter() {
 
         <div className="space-y-4">
           <p
-            className={`text-2xl uppercase text-white ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
           >
             Version
           </p>
@@ -630,20 +642,16 @@ export function InteractiveFooter() {
             onClick={() => setVersionModalOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={versionModalOpen}
-            className="inline-flex w-fit cursor-pointer items-center gap-2 text-4xl text-white transition-opacity duration-200 hover:opacity-75"
+            className="inline-flex w-fit cursor-pointer items-center gap-2 text-2xl text-white transition-opacity duration-200 hover:opacity-75 sm:text-4xl"
           >
             .v 2.0
           </button>
         </div>
       </div>
 
-      <div className="relative z-10 flex w-full items-center justify-center overflow-visible pb-[clamp(0.75rem,2vh,2rem)]">
+      <div className="relative z-10 flex w-full items-center justify-center overflow-visible pb-14 lg:pb-[clamp(0.75rem,2vh,2rem)]">
         <h1
-          className="w-full max-w-none text-center whitespace-nowrap text-[clamp(7rem,22vw,40rem)] font-bold leading-[0.78] tracking-[-0.02em] text-white select-none -ml-8 drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
-          style={{
-            transform: "scaleY(1.6)",
-            transformOrigin: "center bottom",
-          }}
+          className="contact-heading w-full max-w-none text-center text-[clamp(4.5rem,21.5vw,40rem)] leading-[0.78] font-bold tracking-[-0.02em] whitespace-nowrap text-white select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.6)] sm:-ml-8"
         >
           {Array.from("CONTACT").map((letter, index) => (
             <span
@@ -661,12 +669,12 @@ export function InteractiveFooter() {
         </h1>
       </div>
 
-      <div className="absolute bottom-0 right-1 z-20 h-24 w-56 sm:right-4">
+      <div className="pointer-events-none absolute bottom-0 right-1 z-20 h-24 w-56 sm:right-4">
         <button
           type="button"
           onClick={handleBackToTop}
           aria-label="Back to top"
-          className="group absolute bottom-3 right-4 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-white/70 transition-colors duration-200 hover:text-white sm:bottom-5 sm:right-4"
+          className="group pointer-events-auto absolute bottom-3 right-4 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-white/70 transition-colors duration-200 hover:text-white sm:bottom-5 sm:right-4"
         >
           <span>Back to top</span>
           <IoArrowUpOutline
@@ -682,6 +690,17 @@ export function InteractiveFooter() {
       />
 
       <style jsx global>{`
+        .contact-heading {
+          transform: scaleY(1.3);
+          transform-origin: center bottom;
+        }
+
+        @media (min-width: 640px) {
+          .contact-heading {
+            transform: scaleY(1.6);
+          }
+        }
+
         @keyframes twinkle {
           0%,
           100% {
