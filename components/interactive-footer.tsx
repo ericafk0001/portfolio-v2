@@ -158,48 +158,9 @@ function MagneticWrapper({
 
 function CopyEmailButton({ email }: { email: string }) {
   const [copied, setCopied] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const lineRef = useRef<HTMLSpanElement>(null);
-  const isHoveredRef = useRef(false);
   const defaultTextRef = useRef<HTMLSpanElement>(null);
   const copiedTextRef = useRef<HTMLSpanElement>(null);
   const isCopiedRef = useRef(false);
-
-  useEffect(() => {
-    const btn = btnRef.current;
-    const line = lineRef.current;
-    if (!btn || !line) return;
-
-    gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
-
-    const handleMouseEnter = () => {
-      isHoveredRef.current = true;
-      gsap.to(line, {
-        clipPath: "inset(0 0% 0 0)",
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    };
-
-    const handleMouseLeave = () => {
-      isHoveredRef.current = false;
-      gsap.to(line, {
-        clipPath: "inset(0 0 0 100%)",
-        duration: 0.3,
-        ease: "power2.in",
-        onComplete: () => {
-          gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
-        },
-      });
-    };
-
-    btn.addEventListener("mouseenter", handleMouseEnter);
-    btn.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      btn.removeEventListener("mouseenter", handleMouseEnter);
-      btn.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
 
   useEffect(() => {
     if (copiedTextRef.current) {
@@ -249,28 +210,17 @@ function CopyEmailButton({ email }: { email: string }) {
   return (
     <MagneticWrapper>
       <button
-        ref={btnRef}
         type="button"
         onClick={handleCopy}
-        className="inline-flex w-fit items-center gap-2 rounded-full py-2 text-4xl text-white cursor-pointer transition-opacity duration-200 hover:opacity-75 relative"
+        className="group relative inline-flex w-fit cursor-pointer items-center gap-2 rounded-full py-2 text-4xl text-white transition-opacity duration-200 hover:opacity-75"
       >
         <span
           className="relative overflow-hidden"
           style={{ display: "inline-grid" }}
         >
           <span
-            ref={lineRef}
             aria-hidden="true"
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              width: "100%",
-              height: "4px",
-              background: "white",
-              clipPath: "inset(0 100% 0 0)",
-              zIndex: 1,
-            }}
+            className="pointer-events-none absolute bottom-0 left-0 z-[1] h-1 w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
           />
 
           <span
@@ -305,47 +255,9 @@ function CopyEmailButton({ email }: { email: string }) {
 }
 
 function ResumeLink() {
-  const linkRef = useRef<HTMLAnchorElement>(null);
-  const lineRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const link = linkRef.current;
-    const line = lineRef.current;
-    if (!link || !line) return;
-
-    gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
-
-    const handleMouseEnter = () => {
-      gsap.to(line, {
-        clipPath: "inset(0 0% 0 0)",
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    };
-
-    const handleMouseLeave = () => {
-      gsap.to(line, {
-        clipPath: "inset(0 0 0 100%)",
-        duration: 0.3,
-        ease: "power2.in",
-        onComplete: () => {
-          gsap.set(line, { clipPath: "inset(0 100% 0 0)" });
-        },
-      });
-    };
-
-    link.addEventListener("mouseenter", handleMouseEnter);
-    link.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      link.removeEventListener("mouseenter", handleMouseEnter);
-      link.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
-
   return (
     <MagneticWrapper>
       <a
-        ref={linkRef}
         href="/resume.pdf"
         target="_blank"
         rel="noreferrer"
@@ -353,10 +265,8 @@ function ResumeLink() {
       >
         <span className="relative inline-grid">
           <span
-            ref={lineRef}
             aria-hidden="true"
-            className="absolute bottom-0 left-0 z-[1] h-1 w-full bg-white"
-            style={{ clipPath: "inset(0 100% 0 0)" }}
+            className="pointer-events-none absolute bottom-0 left-0 z-[1] h-1 w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
           />
           Résumé
         </span>

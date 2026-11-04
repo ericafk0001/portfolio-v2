@@ -423,6 +423,8 @@ export function InteractiveGradFlow({
       return;
     }
 
+    const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+
     const renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: false,
@@ -493,7 +495,12 @@ export function InteractiveGradFlow({
 
       const width = parent.clientWidth;
       const height = parent.clientHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Mobile GPUs fill these gradients far more slowly, so render them at
+      // a lower pixel density instead of the full device pixel ratio.
+      const dpr = Math.min(
+        window.devicePixelRatio || 1,
+        isCoarsePointer ? 1 : 2,
+      );
 
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
@@ -547,11 +554,25 @@ export function InteractiveGradFlow({
 
     resize();
     const parent = canvas.parentElement;
-    parent?.addEventListener("pointerenter", handlePointerEnter);
-    parent?.addEventListener("pointermove", handlePointerMove);
-    parent?.addEventListener("pointerleave", handlePointerLeave);
-    parent?.addEventListener("pointercancel", handlePointerCancel);
+    if (!isCoarsePointer) {
+      parent?.addEventListener("pointerenter", handlePointerEnter);
+      parent?.addEventListener("pointermove", handlePointerMove);
+      parent?.addEventListener("pointerleave", handlePointerLeave);
+      parent?.addEventListener("pointercancel", handlePointerCancel);
+    }
     window.addEventListener("resize", resize);
+
+    let isVisible = true;
+    const visibilityObserver =
+      typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(
+            (entries) => {
+              isVisible = entries.some((entry) => entry.isIntersecting);
+            },
+            { rootMargin: "160px 0px" },
+          )
+        : null;
+    visibilityObserver?.observe(canvas);
 
     renderer.compile(scene, camera);
     renderer.render(scene, camera);
@@ -601,7 +622,9 @@ export function InteractiveGradFlow({
       uniforms.u_trailStrength2.value = pointerStrength * 0.7;
       uniforms.u_trailStrength3.value = pointerStrength * 0.5;
 
-      renderer.render(scene, camera);
+      if (isVisible) {
+        renderer.render(scene, camera);
+      }
       frameId = window.requestAnimationFrame(animate);
     };
 
@@ -610,6 +633,7 @@ export function InteractiveGradFlow({
     return () => {
       disposed = true;
       window.cancelAnimationFrame(frameId);
+      visibilityObserver?.disconnect();
       window.removeEventListener("resize", resize);
       parent?.removeEventListener("pointerenter", handlePointerEnter);
       parent?.removeEventListener("pointermove", handlePointerMove);

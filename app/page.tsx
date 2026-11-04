@@ -616,14 +616,28 @@ export default function Home() {
       return;
     }
 
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
     ScrollSmoother.get()?.kill();
+
+    // Avoid refreshes (and the resulting jumps) when mobile browser chrome
+    // such as the address bar shows/hides.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
+    // Smooth scrolling works by transforming the content to lag behind native
+    // scroll. That is what caused the flicker/jitter on phones, so touch
+    // devices use the browser's native scrolling instead. ScrollTriggers still
+    // work normally because they fall back to the window scroller.
+    if (ScrollTrigger.isTouch === 1 || prefersReducedMotion) {
+      return;
+    }
 
     const smoother = ScrollSmoother.create({
       wrapper: smoothWrapperRef.current,
       content: smoothContentRef.current,
-      smooth: 2.2,
-      smoothTouch: 0.1,
-      normalizeScroll: true,
+      smooth: 1.2,
       effects: false,
     });
 
@@ -698,17 +712,28 @@ export default function Home() {
     }
 
     const ctx = gsap.context(() => {
-      gsap.set(letters, {
-        opacity: 0.22,
-        y: 18,
-        filter: "blur(9px)",
-        willChange: "opacity, transform, filter",
-      });
+      // Per-letter blur filters are very expensive to composite on mobile,
+      // so touch devices only animate opacity.
+      const useBlur = !window.matchMedia("(pointer: coarse)").matches;
+
+      gsap.set(
+        letters,
+        useBlur
+          ? {
+              opacity: 0.22,
+              y: 18,
+              filter: "blur(9px)",
+              willChange: "opacity, transform, filter",
+            }
+          : {
+              opacity: 0.22,
+              willChange: "opacity",
+            },
+      );
 
       gsap.to(letters, {
         opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
+        ...(useBlur ? { y: 0, filter: "blur(0px)" } : {}),
         ease: "none",
         stagger: {
           each: 0.035,
@@ -940,6 +965,7 @@ export default function Home() {
   const pendingStep = steps.find((step) => !step.done);
   const currentStep = pendingStep?.label ?? "Ready";
   const isLoading = !allReady || isLoaderVisible;
+  const isCompactViewport = windowWidth > 0 && windowWidth < 768;
 
   return (
     <>
@@ -1065,7 +1091,10 @@ export default function Home() {
                   width="140%"
                   height="220%"
                 >
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="11" />
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation={isCompactViewport ? 4 : 11}
+                  />
                 </filter>
               </defs>
               <path
@@ -1361,7 +1390,10 @@ export default function Home() {
                   width="140%"
                   height="220%"
                 >
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="11" />
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation={isCompactViewport ? 4 : 11}
+                  />
                 </filter>
               </defs>
               <path
