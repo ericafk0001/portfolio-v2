@@ -224,15 +224,18 @@ export default function Home() {
   });
   const domReady = true;
 
+  const curveSettleRafRef = useRef<number | null>(null);
   const animationState = useRef({
     curveAmount: 0,
     targetCurveAmount: 0,
     shadowOpacity: SHADOW_MIN_OPACITY,
+    targetShadowOpacity: SHADOW_MIN_OPACITY,
   });
   const invertedAnimationState = useRef({
     curveAmount: 0,
     targetCurveAmount: 0,
     shadowOpacity: SHADOW_MIN_OPACITY,
+    targetShadowOpacity: SHADOW_MIN_OPACITY,
   });
   const [windowWidth, setWindowWidth] = useState(0);
 
@@ -431,25 +434,28 @@ export default function Home() {
     [windowWidth],
   );
 
-  const updatePathForScroll = useCallback(
-    (scrollProgress: number) => {
-      animationState.current.targetCurveAmount = Math.min(
-        scrollProgress * MAX_CURVE_AMOUNT,
-        MAX_CURVE_AMOUNT,
-      );
+  // Scroll callbacks are not guaranteed to keep firing until the eased curve
+  // values reach their targets. iOS Safari in particular can jump straight to
+  // the top on a programmatic scroll, which delivers only a single update and
+  // leaves both dividers stuck part-way through their curve. So the scroll
+  // trigger only sets targets and this loop eases them home on its own frames.
+  const settleCurveAnimations = useCallback(() => {
+    let unsettled = false;
 
-      animationState.current.curveAmount = lerp(
-        animationState.current.curveAmount,
-        animationState.current.targetCurveAmount,
+    const state = animationState.current;
+    if (
+      Math.abs(state.targetCurveAmount - state.curveAmount) > 0.05 ||
+      Math.abs(state.targetShadowOpacity - state.shadowOpacity) > 0.001
+    ) {
+      unsettled = true;
+      state.curveAmount = lerp(
+        state.curveAmount,
+        state.targetCurveAmount,
         0.18,
       );
-
-      const targetShadowOpacity =
-        SHADOW_MIN_OPACITY +
-        (SHADOW_MAX_OPACITY - SHADOW_MIN_OPACITY) * scrollProgress;
-      animationState.current.shadowOpacity = lerp(
-        animationState.current.shadowOpacity,
-        targetShadowOpacity,
+      state.shadowOpacity = lerp(
+        state.shadowOpacity,
+        state.targetShadowOpacity,
         0.2,
       );
 
@@ -457,35 +463,29 @@ export default function Home() {
         shadowPathRef.current.setAttributeNS(
           null,
           "opacity",
-          animationState.current.shadowOpacity.toFixed(3),
+          state.shadowOpacity.toFixed(3),
         );
       }
 
-      setPath(animationState.current.curveAmount);
-    },
-    [setPath, MAX_CURVE_AMOUNT, SHADOW_MAX_OPACITY, SHADOW_MIN_OPACITY, lerp],
-  );
+      setPath(state.curveAmount);
+    }
 
-  const updateInvertedPathForScroll = useCallback(
-    (scrollProgress: number) => {
-      const invertedProgress = 1 - scrollProgress;
-      invertedAnimationState.current.targetCurveAmount = Math.min(
-        invertedProgress * MAX_CURVE_AMOUNT,
-        MAX_CURVE_AMOUNT,
-      );
-
-      invertedAnimationState.current.curveAmount = lerp(
-        invertedAnimationState.current.curveAmount,
-        invertedAnimationState.current.targetCurveAmount,
+    const invertedState = invertedAnimationState.current;
+    if (
+      Math.abs(invertedState.targetCurveAmount - invertedState.curveAmount) >
+        0.05 ||
+      Math.abs(invertedState.targetShadowOpacity - invertedState.shadowOpacity) >
+        0.001
+    ) {
+      unsettled = true;
+      invertedState.curveAmount = lerp(
+        invertedState.curveAmount,
+        invertedState.targetCurveAmount,
         0.35,
       );
-
-      const targetShadowOpacity =
-        SHADOW_MIN_OPACITY +
-        (SHADOW_MAX_OPACITY - SHADOW_MIN_OPACITY) * invertedProgress;
-      invertedAnimationState.current.shadowOpacity = lerp(
-        invertedAnimationState.current.shadowOpacity,
-        targetShadowOpacity,
+      invertedState.shadowOpacity = lerp(
+        invertedState.shadowOpacity,
+        invertedState.targetShadowOpacity,
         0.35,
       );
 
@@ -493,18 +493,74 @@ export default function Home() {
         invertedShadowPathRef.current.setAttributeNS(
           null,
           "opacity",
-          invertedAnimationState.current.shadowOpacity.toFixed(3),
+          invertedState.shadowOpacity.toFixed(3),
         );
       }
 
-      setInvertedPath(invertedAnimationState.current.curveAmount);
+      setInvertedPath(invertedState.curveAmount);
+    }
+
+    return unsettled;
+  }, [lerp, setInvertedPath, setPath]);
+
+  const startCurveSettleLoop = useCallback(() => {
+    if (curveSettleRafRef.current !== null) {
+      return;
+    }
+
+    const tick = () => {
+      curveSettleRafRef.current = null;
+
+      if (settleCurveAnimations()) {
+        curveSettleRafRef.current = window.requestAnimationFrame(tick);
+      }
+    };
+
+    curveSettleRafRef.current = window.requestAnimationFrame(tick);
+  }, [settleCurveAnimations]);
+
+  const updatePathForScroll = useCallback(
+    (scrollProgress: number) => {
+      const state = animationState.current;
+
+      state.targetCurveAmount = Math.min(
+        scrollProgress * MAX_CURVE_AMOUNT,
+        MAX_CURVE_AMOUNT,
+      );
+      state.targetShadowOpacity =
+        SHADOW_MIN_OPACITY +
+        (SHADOW_MAX_OPACITY - SHADOW_MIN_OPACITY) * scrollProgress;
+
+      startCurveSettleLoop();
     },
     [
-      setInvertedPath,
+      startCurveSettleLoop,
       MAX_CURVE_AMOUNT,
       SHADOW_MAX_OPACITY,
       SHADOW_MIN_OPACITY,
-      lerp,
+    ],
+  );
+
+  const updateInvertedPathForScroll = useCallback(
+    (scrollProgress: number) => {
+      const invertedProgress = 1 - scrollProgress;
+      const invertedState = invertedAnimationState.current;
+
+      invertedState.targetCurveAmount = Math.min(
+        invertedProgress * MAX_CURVE_AMOUNT,
+        MAX_CURVE_AMOUNT,
+      );
+      invertedState.targetShadowOpacity =
+        SHADOW_MIN_OPACITY +
+        (SHADOW_MAX_OPACITY - SHADOW_MIN_OPACITY) * invertedProgress;
+
+      startCurveSettleLoop();
+    },
+    [
+      startCurveSettleLoop,
+      MAX_CURVE_AMOUNT,
+      SHADOW_MAX_OPACITY,
+      SHADOW_MIN_OPACITY,
     ],
   );
 
@@ -957,6 +1013,10 @@ export default function Home() {
     return () => {
       if (previewRafRef.current !== null) {
         window.cancelAnimationFrame(previewRafRef.current);
+      }
+      if (curveSettleRafRef.current !== null) {
+        window.cancelAnimationFrame(curveSettleRafRef.current);
+        curveSettleRafRef.current = null;
       }
     };
   }, []);
