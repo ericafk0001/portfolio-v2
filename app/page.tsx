@@ -1075,7 +1075,7 @@ export default function Home() {
           <section
             ref={secondSectionRef}
             id="featured-works"
-            className={`relative min-h-screen w-full overflow-visible bg-black text-zinc-100 ${spaceGrotesk.className}`}
+            className={`relative w-full overflow-visible bg-black text-zinc-100 ${spaceGrotesk.className}`}
             style={{ backgroundColor: SECOND_SECTION_BG }}
           >
             <svg
@@ -1127,7 +1127,7 @@ export default function Home() {
                 strokeLinecap="round"
               />
             </svg>
-            <div className="relative z-10 px-4 pb-12 pt-8 sm:px-6 md:px-8 lg:px-10">
+            <div className="relative z-10 px-4 pb-24 pt-8 sm:px-6 md:px-8 lg:px-10">
               <h2 className="text-[clamp(2.75rem,4.4vw,4.6rem)] font-medium tracking-[-0.06em] text-zinc-100">
                 Featured Works
               </h2>
@@ -1211,7 +1211,7 @@ export default function Home() {
           </section>
           <section
             ref={thirdSectionRef}
-            className="flex w-full items-center justify-center bg-black px-6 pt-24 pb-24 text-center text-zinc-100 md:pt-0 md:pb-40"
+            className="flex w-full items-center justify-center bg-black px-6 pt-12 pb-24 text-center text-zinc-100 md:pt-24 md:pb-40"
           >
             <p
               ref={thirdSectionTextRef}
