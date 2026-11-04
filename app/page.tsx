@@ -62,7 +62,7 @@ gsap.registerPlugin(
 
 export default function Home() {
   const thirdSectionCopy =
-    "I’m a versatile developer specializing in full-stack systems, data-driven applications, scalable architectures, and interactive, real-world projects. I enjoy bringing ideas to life through end-to-end product development, combining strong system design with practical execution. My work emphasizes fast iteration, rigorous logic, and clean, maintainable code, while also exploring areas like machine learning and game development to create both intelligent and engaging experiences.";
+    "I specialize in building optimized websites and automated systems, spanning both software and hardware. As a developer who enjoys end-to-end product development, I focus on bringing ideas to life from scratch while navigating obscure requirements and tight timelines. My priorities are fast execution, rigorous system logic, and efficient problem solving.";
   const techHeaderText = "Tech Stacks";
   const techProgrammingText = "Programming";
   const techWorkflowText = "Workflow";
