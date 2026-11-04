@@ -72,23 +72,22 @@ export default function Home() {
   const featuredWorks = useMemo(
     () => [
       {
+        title: "Death Note Mod",
+        period: "Jan 2025 - Present",
+        href: "#",
+        image: "images/deathnote.webp",
+      },
+      {
+        title: "Anime identifier",
+        period: "Nov 2024 - Nov 2024",
+        href: "#",
+        image: "images/anime.png",
+      },
+      {
         title: "PocketDoc",
-        period: "April 2026 - Present",
+        period: "April 2026 - April 2026",
         href: "#",
         image: "images/pocketdoc.png",
-      },
-      {
-        title: "Shadow Kittens TD",
-        period: "March 2026 - Present",
-        href: "#",
-        image: "images/cat.png",
-      },
-      {
-        title: "CentMetrics",
-        period: "February 2026 - Present",
-        href: "#",
-        image:
-          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
       },
     ],
     [],
