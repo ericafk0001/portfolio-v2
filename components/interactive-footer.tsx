@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Cal_Sans, Space_Grotesk } from "next/font/google";
@@ -26,6 +33,15 @@ const SpaceGrotesk = Space_Grotesk({
 });
 
 const contactEmail = "contactericlin@gmail.com";
+
+const V1_URL = "https://ericafk0001.github.io/Portfolio/";
+
+const previousVersions = [
+  {
+    version: ".v 1.0",
+    href: V1_URL,
+  },
+] as const;
 const starField = Array.from({ length: 90 }, (_, index) => {
   const left = (index * 13.7) % 100;
   const top = (index * 19.1) % 100;
@@ -353,6 +369,131 @@ function ResumeLink() {
   );
 }
 
+const emptySubscribe = () => () => {};
+
+function VersionHistoryModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const smoother = ScrollSmoother.get();
+    smoother?.paused(true);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      smoother?.paused(false);
+    };
+  }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open || !overlayRef.current || !panelRef.current) return;
+
+    const timeline = gsap.timeline();
+    timeline
+      .fromTo(
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: "power2.out" },
+      )
+      .fromTo(
+        panelRef.current,
+        { opacity: 0, y: 0, scale: 0.5 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.25, ease: "power3.out" },
+        "<",
+      );
+
+    return () => {
+      timeline.kill();
+    };
+  }, [open]);
+
+  if (!mounted || !open) return null;
+
+  const handleSelectVersion = (href: string) => {
+    onClose();
+    window.location.assign(href);
+  };
+
+  return createPortal(
+    <div
+      ref={overlayRef}
+      role="presentation"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-6 backdrop-blur-md"
+    >
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="version-history-title"
+        className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[#000000] p-8 text-white shadow-[0_0_60px_rgba(255,255,255,0.15)]"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close version history"
+          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-2xl leading-none text-white/60 transition-colors duration-200 hover:bg-white/10 hover:text-white"
+        >
+          ×
+        </button>
+
+        <p
+          id="version-history-title"
+          className={`text-2xl uppercase ${SpaceGrotesk.className}`}
+        >
+          Version History
+        </p>
+
+        <ul className="mt-6 space-y-2">
+          {previousVersions.map((entry) => (
+            <li key={entry.version}>
+              <button
+                type="button"
+                onClick={() => handleSelectVersion(entry.href)}
+                className="group flex w-full items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4 text-left transition duration-200 hover:border-white/25 hover:bg-white/10"
+              >
+                <span>
+                  <span className="block text-2xl">{entry.version}</span>
+                </span>
+                <IoArrowUpOutline
+                  aria-hidden="true"
+                  className="h-6 w-6 rotate-45 text-white/60 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export function InteractiveFooter() {
   const footerRef = useRef<HTMLDivElement>(null);
   const lettersRef = useRef<HTMLSpanElement[]>([]);
@@ -438,6 +579,11 @@ export function InteractiveFooter() {
   }, []);
 
   const [copied, setCopied] = useState(false);
+  const [versionModalOpen, setVersionModalOpen] = useState(false);
+
+  const closeVersionModal = useCallback(() => {
+    setVersionModalOpen(false);
+  }, []);
 
   const handleCopyEmail = async () => {
     try {
@@ -569,7 +715,15 @@ export function InteractiveFooter() {
           >
             Version
           </p>
-          <p className="text-4xl text-white">.v 2.0</p>
+          <button
+            type="button"
+            onClick={() => setVersionModalOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={versionModalOpen}
+            className="inline-flex w-fit cursor-pointer items-center gap-2 text-4xl text-white transition-opacity duration-200 hover:opacity-75"
+          >
+            .v 2.0
+          </button>
         </div>
       </div>
 
@@ -611,6 +765,11 @@ export function InteractiveFooter() {
           />
         </button>
       </div>
+
+      <VersionHistoryModal
+        open={versionModalOpen}
+        onClose={closeVersionModal}
+      />
 
       <style jsx global>{`
         @keyframes twinkle {
