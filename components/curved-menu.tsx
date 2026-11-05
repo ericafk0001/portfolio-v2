@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
   type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -76,6 +78,14 @@ export function CurvedMenu() {
   const footerRef = useRef<HTMLDivElement | null>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
+  const toggleInnerRef = useRef<HTMLSpanElement | null>(null);
+  const toggleRafRef = useRef<number | null>(null);
+  const toggleMotionRef = useRef({
+    current: { x: 0, y: 0, rotation: 0, scale: 1 },
+    target: { x: 0, y: 0, rotation: 0, scale: 1 },
+    velocity: { x: 0, y: 0, rotation: 0, scale: 0 },
+  });
+
   // The inline transform keeps the panel off-screen before hydration; GSAP
   // reads that percentage as an extra pixel offset, so clear it here and let
   // xPercent + x be the single source of truth. The extra 100px clears the
@@ -88,6 +98,121 @@ export function CurvedMenu() {
   const ready = viewportHeight > 0;
   const showButton =
     isOpen || isMobile || scrolled || ALWAYS_VISIBLE_ROUTES.has(pathname);
+
+  // Magnetic hover for the curved menu trigger, mirroring the More Projects
+  // button on the homepage: pointer-anchored translate/rotate/scale spring
+  // with a lagging inner element and a springy return on leave.
+  const renderToggleMotion = useCallback(() => {
+    const button = toggleRef.current;
+    const inner = toggleInnerRef.current;
+
+    if (!button || !inner) {
+      return;
+    }
+
+    const { x, y, rotation, scale } = toggleMotionRef.current.current;
+
+    button.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
+    inner.style.transform = `translate3d(${x * 0.64}px, ${y * 0.64}px, 0) rotate(${rotation * 0.42}deg) scale(${1 + (scale - 1) * 0.52})`;
+    button.style.boxShadow = `0 ${Math.max(10, scale * 16)}px ${Math.max(24, scale * 32)}px rgba(0, 0, 0, ${0.16 + (scale - 1) * 1.8})`;
+  }, []);
+
+  const stepToggleMotion = useCallback(() => {
+    const state = toggleMotionRef.current;
+
+    const stiffness = 0.14;
+    const damping = state.target.scale > 1.001 ? 0.74 : 0.7;
+
+    const advance = (key: "x" | "y" | "rotation" | "scale") => {
+      state.velocity[key] +=
+        (state.target[key] - state.current[key]) * stiffness;
+      state.velocity[key] *= damping;
+      state.current[key] += state.velocity[key];
+    };
+
+    advance("x");
+    advance("y");
+    advance("rotation");
+    advance("scale");
+
+    renderToggleMotion();
+
+    const isSettled =
+      Math.abs(state.current.x) < 0.15 &&
+      Math.abs(state.current.y) < 0.15 &&
+      Math.abs(state.current.rotation) < 0.15 &&
+      Math.abs(state.current.scale - 1) < 0.002 &&
+      Math.abs(state.velocity.x) < 0.05 &&
+      Math.abs(state.velocity.y) < 0.05 &&
+      Math.abs(state.velocity.rotation) < 0.05 &&
+      Math.abs(state.velocity.scale) < 0.0006;
+
+    if (isSettled) {
+      const button = toggleRef.current;
+      const inner = toggleInnerRef.current;
+
+      if (button) {
+        button.style.transform = "";
+        button.style.boxShadow = "";
+      }
+
+      if (inner) {
+        inner.style.transform = "";
+      }
+
+      toggleRafRef.current = null;
+      return;
+    }
+
+    toggleRafRef.current = window.requestAnimationFrame(stepToggleMotion);
+  }, [renderToggleMotion]);
+
+  const startToggleMotion = useCallback(() => {
+    if (toggleRafRef.current !== null) {
+      return;
+    }
+
+    toggleRafRef.current = window.requestAnimationFrame(stepToggleMotion);
+  }, [stepToggleMotion]);
+
+  const updateTogglePosition = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = event.clientX - centerX;
+      const deltaY = event.clientY - centerY;
+
+      const translateX = Math.max(-36, Math.min(36, deltaX * 0.5));
+      const translateY = Math.max(-24, Math.min(24, deltaY * 0.5));
+      const rotation = Math.max(-14, Math.min(14, deltaX * 0.085));
+      const scale = 1.08 + Math.min(0.09, Math.hypot(deltaX, deltaY) * 0.00065);
+
+      const state = toggleMotionRef.current;
+      state.target = { x: translateX, y: translateY, rotation, scale };
+
+      startToggleMotion();
+    },
+    [startToggleMotion],
+  );
+
+  const resetTogglePosition = useCallback(() => {
+    const state = toggleMotionRef.current;
+
+    if (toggleRafRef.current === null) {
+      return;
+    }
+
+    state.target = { x: 0, y: 0, rotation: 0, scale: 1 };
+    state.velocity.x += state.current.x * 0.36;
+    state.velocity.y += state.current.y * 0.36;
+    state.velocity.rotation += state.current.rotation * 0.28;
+    state.velocity.scale -= (state.current.scale - 1) * 0.48;
+
+    startToggleMotion();
+  }, [startToggleMotion]);
 
   const drawCurve = () => {
     const path = curveRef.current;
@@ -273,6 +398,26 @@ export function CurvedMenu() {
     if (isOpen) panelRef.current?.focus();
   }, [isOpen]);
 
+  // Stop the magnetic motion when the trigger hides so its inline transform
+  // does not fight the show/hide scale transition.
+  useEffect(() => {
+    if (showButton) return;
+    toggleMotionRef.current.target = { x: 0, y: 0, rotation: 0, scale: 1 };
+    toggleMotionRef.current.current = { x: 0, y: 0, rotation: 0, scale: 1 };
+    toggleMotionRef.current.velocity = { x: 0, y: 0, rotation: 0, scale: 0 };
+    if (toggleRafRef.current !== null) {
+      window.cancelAnimationFrame(toggleRafRef.current);
+      toggleRafRef.current = null;
+    }
+    if (toggleRef.current) {
+      toggleRef.current.style.transform = "";
+      toggleRef.current.style.boxShadow = "";
+    }
+    if (toggleInnerRef.current) {
+      toggleInnerRef.current.style.transform = "";
+    }
+  }, [showButton]);
+
   // Keep keyboard focus inside the open menu.
   useEffect(() => {
     if (!isOpen) return;
@@ -337,20 +482,24 @@ export function CurvedMenu() {
         aria-hidden={!showButton}
         tabIndex={showButton ? 0 : -1}
         onClick={() => setIsOpen((open) => !open)}
+        onPointerEnter={updateTogglePosition}
+        onPointerMove={updateTogglePosition}
+        onPointerLeave={resetTogglePosition}
         style={{
           opacity: showButton ? 1 : 0,
-          transform: showButton ? "scale(1)" : "scale(0.9)",
+          transform: showButton ? "scale(1)" : "scale(0)",
           transition:
             "opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease-out",
           willChange: "opacity, transform",
         }}
         className={`fixed right-4 top-4 z-[120] flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-1 ring-black/10 hover:bg-white sm:right-6 sm:top-6 sm:h-18 sm:w-18 ${
-          showButton
-            ? "pointer-events-auto"
-            : "pointer-events-none"
+          showButton ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
-        <span className="flex h-[18px] w-9 flex-col items-center justify-center gap-[6px]">
+        <span
+          ref={toggleInnerRef}
+          className="flex h-[18px] w-9 flex-col items-center justify-center gap-[6px] will-change-transform"
+        >
           <span
             className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
               isOpen ? "translate-y-[3.25px] rotate-45" : ""
