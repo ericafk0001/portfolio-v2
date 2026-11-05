@@ -25,3 +25,39 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Navbar "Contact" burst fill.
+   Painted as the element's own background instead of a scaled child element,
+   so the rounded overflow clip can never leave a white sliver at the pill's
+   left/right edges. The radius grows from the dot at 24px (px-5 + dot radius). */
+@property --contact-fill {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 4px;
+}
+
+.contact-fill {
+  /* 4px = the resting dot's radius, so the gradient always paints (Firefox
+     renders a 0px gradient inconsistently). No background-color is used: the
+     white and black both come from this one image, so the rounded clip can
+     never reveal a separate white layer. */
+  --contact-fill: 4px;
+  background-image: radial-gradient(
+    circle var(--contact-fill) at 24px 50%,
+    #000 100%,
+    #fff 100%
+  );
+  transition: --contact-fill 300ms ease-out;
+}
+
+.contact-fill:hover,
+.contact-fill:focus-visible {
+  /* 160px = the original demo's 8px dot scaled 40x (radius). */
+  --contact-fill: 160px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-fill {
+    transition: none;
+  }
+}

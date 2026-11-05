@@ -4,6 +4,8 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { ContactButton } from "@/components/contact-button";
+
 const navLinks = [
   { label: "About", href: "/about" },
   { label: "Projects", href: "/#featured-works" },
@@ -70,13 +72,7 @@ export function Navbar() {
         </div>
 
         <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
-          <Link
-            href="/contact"
-            aria-current={pathname === "/contact" ? "page" : undefined}
-            className="hidden cursor-pointer items-center gap-2 bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 transition-colors hover:bg-transparent hover:text-white md:inline-flex"
-          >
-            Contact
-          </Link>
+          <ContactButton active={pathname === "/contact"} />
         </div>
       </div>
     </header>

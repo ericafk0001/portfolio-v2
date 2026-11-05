@@ -9,7 +9,7 @@ export function Loader({ currentStep, progress }: LoaderProps) {
   const clampedProgress = Math.max(0, Math.min(100, progress));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black">
       <div className="w-80 max-w-[70vw]">
         <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/15">
           <div
