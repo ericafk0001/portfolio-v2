@@ -10,41 +10,21 @@ export function Loader({ currentStep, progress }: LoaderProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="flex w-70 flex-col items-center gap-6">
-        <div className="flex gap-2">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-2 w-2 rounded-full bg-white"
-              style={{
-                animation: "loader-pulse 1.2s ease-in-out infinite",
-                animationDelay: `${i * 0.2}s`,
-              }}
-            />
-          ))}
-        </div>
-        <div className="h-6 text-center">
-          <p className="text-sm text-white/70 transition-all duration-300">
-            {currentStep}
-          </p>
-        </div>
-        <div className="h-1 w-full overflow-hidden rounded bg-white/15">
+      <div className="w-80 max-w-[70vw]">
+        <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/15">
           <div
-            className="h-full rounded bg-white transition-[width] duration-300 ease-out"
+            className="h-full rounded-full bg-white transition-[width] duration-300 ease-out"
             style={{ width: `${clampedProgress}%` }}
           />
         </div>
       </div>
-      <style>{`
-        @keyframes loader-pulse {
-          0%, 80%, 100% {
-            opacity: 0.3;
-          }
-          40% {
-            opacity: 1;
-          }
-        }
-      `}</style>
+      <p
+        role="status"
+        aria-live="polite"
+        className="absolute bottom-6 left-6 text-xs uppercase tracking-[0.18em] text-white/60 sm:bottom-8 sm:left-8 sm:text-sm"
+      >
+        {currentStep}
+      </p>
     </div>
   );
 }

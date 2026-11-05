@@ -213,6 +213,7 @@ export default function Home() {
   const previewPosRef = useRef({ x: 0, y: 0 });
   const previewRafRef = useRef<number | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
+  const headerIntroRef = useRef<HTMLDivElement | null>(null);
   const moreProjectsButtonRef = useRef<HTMLAnchorElement | null>(null);
   const moreProjectsTextRef = useRef<HTMLSpanElement | null>(null);
   const moreProjectsRafRef = useRef<number | null>(null);
@@ -665,6 +666,20 @@ export default function Home() {
           ease: "power4.in",
         },
         0,
+      )
+      // Wait for the loader overlay to finish sliding away, then drop the
+      // navbar in from above the viewport. It lives on its own wrapper so this
+      // never fights the scroll-triggered header fade on the <header> itself.
+      .fromTo(
+        headerIntroRef.current ?? [],
+        { y: -500 },
+        {
+          y: 0,
+          duration: 1,
+          ease: "power4.out",
+          clearProps: "transform",
+        },
+        0.55,
       );
 
     return () => {
@@ -1047,70 +1062,72 @@ export default function Home() {
             ref={pageRef}
             className="relative min-h-[130vh] overflow-hidden bg-black"
           >
-            <header
-              ref={headerRef}
-              className="relative z-20 border-b-2 border-white/25 bg-transparent backdrop-blur-sm"
-            >
-              <div className="flex h-16 w-full items-center px-3 md:px-5">
-                <div className="flex items-center">
-                  <a
-                    href="#"
-                    className="font-(family-name:--font-stalinist-one) shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white px-5"
-                  >
-                    ERIC LIN
-                  </a>
-                  <span className="mx-3 h-16 w-px bg-white/20" />
-                  <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
+            <div ref={headerIntroRef} className="relative z-20">
+              <header
+                ref={headerRef}
+                className="relative z-20 border-b-2 border-white/25 bg-transparent backdrop-blur-sm"
+              >
+                <div className="flex h-16 w-full items-center px-3 md:px-5">
+                  <div className="flex items-center">
                     <a
-                      href="/about"
-                      className="px-5 transition-colors hover:text-white"
+                      href="#"
+                      className="font-(family-name:--font-stalinist-one) shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white px-5"
                     >
-                      About
+                      ERIC LIN
                     </a>
+                    <span className="mx-3 h-16 w-px bg-white/20" />
+                    <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
+                      <a
+                        href="/about"
+                        className="px-5 transition-colors hover:text-white"
+                      >
+                        About
+                      </a>
 
-                    <span className="h-full w-px bg-white/20" />
-                    <a
-                      href="#"
-                      className="px-5 transition-colors hover:text-white"
-                    >
-                      Projects
-                    </a>
-                    <span className="h-full w-px bg-white/20" />
-                    <a
-                      href="#"
-                      className="px-5 transition-colors hover:text-white"
-                    >
-                      Honors
-                    </a>
-                    <span className="h-full w-px bg-white/20" />
-                    <a
-                      href="#"
-                      className="px-5 transition-colors hover:text-white"
-                    >
-                      Blog
-                    </a>
-                    <span className="h-full w-px bg-white/20" />
-                    <a
-                      href="/resume.pdf"
-                      target="_blank"
-                      className="px-5 transition-colors hover:text-white"
-                    >
-                      Resume
-                    </a>
-                  </nav>
-                </div>
+                      <span className="h-full w-px bg-white/20" />
+                      <a
+                        href="#"
+                        className="px-5 transition-colors hover:text-white"
+                      >
+                        Projects
+                      </a>
+                      <span className="h-full w-px bg-white/20" />
+                      <a
+                        href="#"
+                        className="px-5 transition-colors hover:text-white"
+                      >
+                        Honors
+                      </a>
+                      <span className="h-full w-px bg-white/20" />
+                      <a
+                        href="#"
+                        className="px-5 transition-colors hover:text-white"
+                      >
+                        Blog
+                      </a>
+                      <span className="h-full w-px bg-white/20" />
+                      <a
+                        href="/resume.pdf"
+                        target="_blank"
+                        className="px-5 transition-colors hover:text-white"
+                      >
+                        Resume
+                      </a>
+                    </nav>
+                  </div>
 
-                <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
-                  <a
-                    type="button"
-                    href="contact"
-                    className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 transition-colors hover:bg-transparent hover:text-white md:inline-flex"
-                  >
-                    Contact
-                  </a>
+                  <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
+                    <a
+                      type="button"
+                      href="contact"
+                      className="hidden items-center gap-2 cursor-pointer bg-zinc-100 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 transition-colors hover:bg-transparent hover:text-white md:inline-flex"
+                    >
+                      Contact
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </header>
+              </header>
+            </div>
             <InteractiveGradFlow
               className="pointer-events-none absolute inset-0 z-0 h-full w-full"
               paused={false}
@@ -1271,7 +1288,7 @@ export default function Home() {
           </section>
           <section
             ref={thirdSectionRef}
-            className="flex w-full items-center justify-center bg-black px-6 pt-12 pb-24 text-center text-zinc-100 md:pt-24 md:pb-40"
+            className="flex w-full items-center justify-center bg-black px-6 pt-32 pb-40 text-center text-zinc-100 md:pt-48 md:pb-64"
           >
             <p
               ref={thirdSectionTextRef}
