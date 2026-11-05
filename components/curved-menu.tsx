@@ -337,10 +337,17 @@ export function CurvedMenu() {
         aria-hidden={!showButton}
         tabIndex={showButton ? 0 : -1}
         onClick={() => setIsOpen((open) => !open)}
-        className={`fixed right-4 top-4 z-[120] flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-1 ring-black/10 transition-[opacity,transform,background-color] duration-300 ease-out hover:bg-white sm:right-6 sm:top-6 sm:h-18 sm:w-18 ${
+        style={{
+          opacity: showButton ? 1 : 0,
+          transform: showButton ? "scale(1)" : "scale(0.9)",
+          transition:
+            "opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease-out",
+          willChange: "opacity, transform",
+        }}
+        className={`fixed right-4 top-4 z-[120] flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-1 ring-black/10 hover:bg-white sm:right-6 sm:top-6 sm:h-18 sm:w-18 ${
           showButton
-            ? "pointer-events-auto scale-100 opacity-100"
-            : "pointer-events-none scale-75 opacity-0"
+            ? "pointer-events-auto"
+            : "pointer-events-none"
         }`}
       >
         <span className="flex h-[18px] w-9 flex-col items-center justify-center gap-[6px]">
