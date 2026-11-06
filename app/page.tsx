@@ -9,6 +9,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Space_Grotesk, Montserrat } from "next/font/google";
 
 import { gsap } from "gsap";
@@ -60,6 +61,11 @@ gsap.registerPlugin(
   ScrollToPlugin,
   SplitText,
 );
+
+// Module scope survives client-side route changes, so the loader and intro
+// reveal only play when the home page is first mounted. A full reload resets
+// this and shows the loader again, which is expected.
+let hasPlayedIntro = false;
 
 export default function Home() {
   const thirdSectionCopy =
@@ -185,7 +191,8 @@ export default function Home() {
   const TECH_CURVE_END_PERCENT = 100;
   const TECH_CURVE_SCRUB = 0.6;
 
-  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+  const [skipIntro] = useState(hasPlayedIntro);
+  const [isLoaderVisible, setIsLoaderVisible] = useState(!skipIntro);
   const [fontsReady, setFontsReady] = useState(false);
   const [gradientReady, setGradientReady] = useState(false);
   const [settleReady, setSettleReady] = useState(false);
@@ -619,12 +626,22 @@ export default function Home() {
     };
   }, [domReady, fontsReady, gradientReady]);
 
-  const allReady = domReady && fontsReady && gradientReady && settleReady;
+  const allReady =
+    skipIntro || (domReady && fontsReady && gradientReady && settleReady);
 
   useEffect(() => {
     if (!allReady) {
       return;
     }
+
+    // Returning to the home page from another route should feel instant:
+    // skip the loader and the intro reveal, leaving the page visible as-is.
+    if (skipIntro) {
+      setIsLoaderVisible(false);
+      return;
+    }
+
+    hasPlayedIntro = true;
 
     let split: SplitText | null = null;
 
@@ -687,7 +704,7 @@ export default function Home() {
       tl.kill();
       split?.revert();
     };
-  }, [allReady]);
+  }, [allReady, skipIntro]);
 
   useEffect(() => {
     if (!allReady || !smoothWrapperRef.current || !smoothContentRef.current) {
@@ -1047,7 +1064,7 @@ export default function Home() {
   const progress = Math.round((completedSteps / steps.length) * 100);
   const pendingStep = steps.find((step) => !step.done);
   const currentStep = pendingStep?.label ?? "Ready";
-  const isLoading = !allReady || isLoaderVisible;
+  const isLoading = !skipIntro && (!allReady || isLoaderVisible);
   const isCompactViewport = windowWidth > 0 && windowWidth < 768;
 
   return (
@@ -1078,12 +1095,12 @@ export default function Home() {
                     </a>
                     <span className="mx-3 h-16 w-px bg-white/20" />
                     <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
-                      <a
+                      <Link
                         href="/about"
                         className="px-5 transition-colors hover:text-white"
                       >
                         About
-                      </a>
+                      </Link>
 
                       <span className="h-full w-px bg-white/20" />
                       <a

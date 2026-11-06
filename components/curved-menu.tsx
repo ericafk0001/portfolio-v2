@@ -111,6 +111,7 @@ export function CurvedMenu() {
   const [indicator, setIndicator] = useState(pathname);
 
   const toggleRef = useRef<HTMLButtonElement | null>(null);
+  const toggleWrapRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const curveRef = useRef<SVGPathElement | null>(null);
@@ -140,6 +141,46 @@ export function CurvedMenu() {
   const ready = viewportHeight > 0;
   const showButton =
     isOpen || isMobile || scrolled || ALWAYS_VISIBLE_ROUTES.has(pathname);
+
+  // Pop the trigger in/out with a springy overshoot. The animation lives on a
+  // wrapper element so it never fights the magnetic hover transform that is
+  // written directly onto the button itself.
+  useEffect(() => {
+    const wrapper = toggleWrapRef.current;
+    if (!wrapper) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(wrapper, {
+        autoAlpha: showButton ? 1 : 0,
+        scale: showButton ? 1 : 0,
+      });
+      return;
+    }
+
+    gsap.killTweensOf(wrapper);
+
+    if (showButton) {
+      gsap.fromTo(
+        wrapper,
+        { autoAlpha: 0, scale: 0 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "back.out(2)",
+          overwrite: true,
+        },
+      );
+    } else {
+      gsap.to(wrapper, {
+        autoAlpha: 0,
+        scale: 0,
+        duration: 0.2,
+        ease: "power2.in",
+        overwrite: true,
+      });
+    }
+  }, [showButton]);
 
   // Magnetic hover for the curved menu trigger, mirroring the More Projects
   // button on the homepage: pointer-anchored translate/rotate/scale spring
@@ -649,45 +690,49 @@ export function CurvedMenu() {
 
   return (
     <>
-      <button
-        ref={toggleRef}
-        type="button"
-        aria-label={isOpen ? "Close menu" : "Open menu"}
-        aria-expanded={isOpen}
-        aria-controls="curved-menu"
-        aria-hidden={!showButton}
-        tabIndex={showButton ? 0 : -1}
-        onClick={() => setIsOpen((open) => !open)}
-        onPointerEnter={updateTogglePosition}
-        onPointerMove={updateTogglePosition}
-        onPointerLeave={resetTogglePosition}
+      <div
+        ref={toggleWrapRef}
         style={{
-          opacity: showButton ? 1 : 0,
-          transform: showButton ? "scale(1)" : "scale(0)",
-          transition:
-            "opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease-out",
+          opacity: 0,
+          transform: "scale(0)",
+          transformOrigin: "50% 50%",
           willChange: "opacity, transform",
         }}
-        className={`fixed right-4 top-4 z-[120] flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-1 ring-black/10 hover:bg-white sm:right-6 sm:top-6 sm:h-18 sm:w-18 ${
-          showButton ? "pointer-events-auto" : "pointer-events-none"
-        }`}
+        className="fixed right-4 top-4 z-[120] sm:right-6 sm:top-6"
       >
-        <span
-          ref={toggleInnerRef}
-          className="flex h-[18px] w-9 flex-col items-center justify-center gap-[6px] will-change-transform"
+        <button
+          ref={toggleRef}
+          type="button"
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+          aria-controls="curved-menu"
+          aria-hidden={!showButton}
+          tabIndex={showButton ? 0 : -1}
+          onClick={() => setIsOpen((open) => !open)}
+          onPointerEnter={updateTogglePosition}
+          onPointerMove={updateTogglePosition}
+          onPointerLeave={resetTogglePosition}
+          className={`flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 text-zinc-900 shadow-[0_12px_32px_rgba(0,0,0,0.35)] ring-1 ring-black/10 transition-colors duration-300 ease-out will-change-transform hover:bg-white sm:h-18 sm:w-18 ${
+            showButton ? "pointer-events-auto" : "pointer-events-none"
+          }`}
         >
           <span
-            className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
-              isOpen ? "translate-y-[3.25px] rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
-              isOpen ? "-translate-y-[3.25px] -rotate-45" : ""
-            }`}
-          />
-        </span>
-      </button>
+            ref={toggleInnerRef}
+            className="flex h-[18px] w-9 flex-col items-center justify-center gap-[6px] will-change-transform"
+          >
+            <span
+              className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
+                isOpen ? "translate-y-[3.25px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
+                isOpen ? "-translate-y-[3.25px] -rotate-45" : ""
+              }`}
+            />
+          </span>
+        </button>
+      </div>
 
       <div
         ref={overlayRef}
