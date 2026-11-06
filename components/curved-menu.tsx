@@ -56,6 +56,48 @@ function buildCurvePath(height: number, controlX: number) {
   return `M100 0 L200 0 L200 ${height} L100 ${height} Q${controlX} ${height / 2} 100 0`;
 }
 
+/** Shared spring state for cursor-tracking (magnetic) hover elements. */
+type MagnetMotionState = {
+  current: { x: number; y: number; rotation: number; scale: number };
+  target: { x: number; y: number; rotation: number; scale: number };
+  velocity: { x: number; y: number; rotation: number; scale: number };
+};
+
+type MagnetKey = "x" | "y" | "rotation" | "scale";
+const MAGNET_KEYS: Array<MagnetKey> = ["x", "y", "rotation", "scale"];
+const MAGNET_STIFFNESS = 0.14;
+
+function createMagnetState(): MagnetMotionState {
+  return {
+    current: { x: 0, y: 0, rotation: 0, scale: 1 },
+    target: { x: 0, y: 0, rotation: 0, scale: 1 },
+    velocity: { x: 0, y: 0, rotation: 0, scale: 0 },
+  };
+}
+
+/** Integrates one frame of the magnetic spring; returns true once settled. */
+function advanceMagnet(motion: MagnetMotionState) {
+  const damping = motion.target.scale > 1.001 ? 0.74 : 0.7;
+
+  for (const key of MAGNET_KEYS) {
+    motion.velocity[key] +=
+      (motion.target[key] - motion.current[key]) * MAGNET_STIFFNESS;
+    motion.velocity[key] *= damping;
+    motion.current[key] += motion.velocity[key];
+  }
+
+  return (
+    Math.abs(motion.current.x) < 0.15 &&
+    Math.abs(motion.current.y) < 0.15 &&
+    Math.abs(motion.current.rotation) < 0.15 &&
+    Math.abs(motion.current.scale - 1) < 0.002 &&
+    Math.abs(motion.velocity.x) < 0.05 &&
+    Math.abs(motion.velocity.y) < 0.05 &&
+    Math.abs(motion.velocity.rotation) < 0.05 &&
+    Math.abs(motion.velocity.scale) < 0.0006
+  );
+}
+
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -118,34 +160,9 @@ export function CurvedMenu() {
   }, []);
 
   const stepToggleMotion = useCallback(() => {
-    const state = toggleMotionRef.current;
-
-    const stiffness = 0.14;
-    const damping = state.target.scale > 1.001 ? 0.74 : 0.7;
-
-    const advance = (key: "x" | "y" | "rotation" | "scale") => {
-      state.velocity[key] +=
-        (state.target[key] - state.current[key]) * stiffness;
-      state.velocity[key] *= damping;
-      state.current[key] += state.velocity[key];
-    };
-
-    advance("x");
-    advance("y");
-    advance("rotation");
-    advance("scale");
+    const isSettled = advanceMagnet(toggleMotionRef.current);
 
     renderToggleMotion();
-
-    const isSettled =
-      Math.abs(state.current.x) < 0.15 &&
-      Math.abs(state.current.y) < 0.15 &&
-      Math.abs(state.current.rotation) < 0.15 &&
-      Math.abs(state.current.scale - 1) < 0.002 &&
-      Math.abs(state.velocity.x) < 0.05 &&
-      Math.abs(state.velocity.y) < 0.05 &&
-      Math.abs(state.velocity.rotation) < 0.05 &&
-      Math.abs(state.velocity.scale) < 0.0006;
 
     if (isSettled) {
       const button = toggleRef.current;
@@ -213,6 +230,142 @@ export function CurvedMenu() {
 
     startToggleMotion();
   }, [startToggleMotion]);
+
+  // Magnetic hover for the footer links: shares the menu trigger's spring,
+  // tuned down for small text links (gentler pull, tiny rotation/scale) so
+  // they trail the cursor without colliding with their neighbours.
+  const footerLinkRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const footerInnerRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const footerRafRefs = useRef<Array<number | null>>(
+    footerLinks.map(() => null),
+  );
+  const footerMotionRef = useRef(
+    footerLinks.map(() => createMagnetState()),
+  );
+  const footerMagnetEnabledRef = useRef(false);
+
+  // Magnetism only makes sense on fine-pointer devices without reduced
+  // motion; on touch a tap fires pointerenter with no matching leave.
+  useEffect(() => {
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => {
+      footerMagnetEnabledRef.current = fine.matches && !reduced.matches;
+    };
+    update();
+    fine.addEventListener("change", update);
+    reduced.addEventListener("change", update);
+    return () => {
+      fine.removeEventListener("change", update);
+      reduced.removeEventListener("change", update);
+    };
+  }, []);
+
+  const renderFooterLinkMotion = useCallback((index: number) => {
+    const link = footerLinkRefs.current[index];
+    const inner = footerInnerRefs.current[index];
+
+    if (!link || !inner) {
+      return;
+    }
+
+    const { x, y, rotation, scale } = footerMotionRef.current[index].current;
+
+    link.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
+    inner.style.transform = `translate3d(${x * 0.64}px, ${y * 0.64}px, 0) rotate(${rotation * 0.42}deg) scale(${1 + (scale - 1) * 0.52})`;
+  }, []);
+
+  const stepFooterLinkMotion = useCallback(
+    (index: number) => {
+      const isSettled = advanceMagnet(footerMotionRef.current[index]);
+
+      renderFooterLinkMotion(index);
+
+      if (isSettled) {
+        const link = footerLinkRefs.current[index];
+        const inner = footerInnerRefs.current[index];
+
+        if (link) {
+          link.style.transform = "";
+        }
+
+        if (inner) {
+          inner.style.transform = "";
+        }
+
+        footerRafRefs.current[index] = null;
+        return;
+      }
+
+      footerRafRefs.current[index] = window.requestAnimationFrame(() =>
+        stepFooterLinkMotion(index),
+      );
+    },
+    [renderFooterLinkMotion],
+  );
+
+  const startFooterLinkMotion = useCallback(
+    (index: number) => {
+      if (footerRafRefs.current[index] !== null) {
+        return;
+      }
+
+      footerRafRefs.current[index] = window.requestAnimationFrame(() =>
+        stepFooterLinkMotion(index),
+      );
+    },
+    [stepFooterLinkMotion],
+  );
+
+  const updateFooterLinkPosition = useCallback(
+    (index: number, event: ReactPointerEvent<HTMLAnchorElement>) => {
+      if (!footerMagnetEnabledRef.current) {
+        return;
+      }
+
+      const link = footerLinkRefs.current[index];
+      if (!link) {
+        return;
+      }
+
+      const rect = link.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const deltaX = event.clientX - centerX;
+      const deltaY = event.clientY - centerY;
+
+      const motion = footerMotionRef.current[index];
+      motion.target = {
+        x: Math.max(-10, Math.min(10, deltaX * 0.5)),
+        y: Math.max(-6, Math.min(6, deltaY * 0.5)),
+        rotation: Math.max(-3, Math.min(3, deltaX * 0.05)),
+        scale: 1.05 + Math.min(0.03, Math.hypot(deltaX, deltaY) * 0.00035),
+      };
+
+      startFooterLinkMotion(index);
+    },
+    [startFooterLinkMotion],
+  );
+
+  const resetFooterLinkPosition = useCallback(
+    (index: number) => {
+      if (footerRafRefs.current[index] === null) {
+        return;
+      }
+
+      const motion = footerMotionRef.current[index];
+
+      motion.target = { x: 0, y: 0, rotation: 0, scale: 1 };
+      motion.velocity.x += motion.current.x * 0.36;
+      motion.velocity.y += motion.current.y * 0.36;
+      motion.velocity.rotation += motion.current.rotation * 0.28;
+      motion.velocity.scale -= (motion.current.scale - 1) * 0.48;
+
+      startFooterLinkMotion(index);
+    },
+    [startFooterLinkMotion],
+  );
 
   const drawCurve = () => {
     const path = curveRef.current;
@@ -398,6 +551,29 @@ export function CurvedMenu() {
     if (isOpen) panelRef.current?.focus();
   }, [isOpen]);
 
+  // Reset every footer link's magnet when the menu closes: closing via the
+  // overlay or Escape skips pointerleave, which would otherwise leave the
+  // links offset when the panel opens again.
+  useEffect(() => {
+    if (isOpen) return;
+
+    footerRafRefs.current.forEach((raf) => {
+      if (raf !== null) {
+        window.cancelAnimationFrame(raf);
+      }
+    });
+
+    footerMotionRef.current = footerLinks.map(() => createMagnetState());
+    footerRafRefs.current = footerLinks.map(() => null);
+
+    footerLinkRefs.current.forEach((link) => {
+      if (link) link.style.transform = "";
+    });
+    footerInnerRefs.current.forEach((inner) => {
+      if (inner) inner.style.transform = "";
+    });
+  }, [isOpen]);
+
   // Stop the magnetic motion when the trigger hides so its inline transform
   // does not fight the show/hide scale transition.
   useEffect(() => {
@@ -580,37 +756,68 @@ export function CurvedMenu() {
               ref={footerRef}
               className="flex w-full flex-col items-start gap-y-4 whitespace-nowrap text-[0.8rem] uppercase tracking-[0.12em] text-white sm:flex-row sm:items-center sm:justify-between sm:gap-x-8 sm:gap-y-0 sm:text-[0.7rem]"
             >
-              {footerLinks.map((link) =>
-                link.external ? (
+              {footerLinks.map((link, index) => {
+                const shared = {
+                  className:
+                    "group/footer relative inline-flex items-center pl-[2px] pr-[3px] transition-colors duration-300 ease-out hover:text-black",
+                  ref: (element: HTMLAnchorElement | null) => {
+                    footerLinkRefs.current[index] = element;
+                  },
+                  onPointerEnter: (
+                    event: ReactPointerEvent<HTMLAnchorElement>,
+                  ) => updateFooterLinkPosition(index, event),
+                  onPointerMove: (
+                    event: ReactPointerEvent<HTMLAnchorElement>,
+                  ) => updateFooterLinkPosition(index, event),
+                  onPointerLeave: () => resetFooterLinkPosition(index),
+                };
+                const content = (
+                  <>
+                    {/* White fill that sweeps in from the left edge. Negative
+                        z keeps it behind the inherited text/arrow. */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -z-10 origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover/footer:scale-x-100"
+                    />
+                    {/* Inner layer lags the link box during the magnetic
+                        hover, mirroring the menu trigger's hamburger. */}
+                    <span
+                      ref={(element) => {
+                        footerInnerRefs.current[index] = element;
+                      }}
+                      className="relative z-10 flex items-center gap-1 will-change-transform"
+                    >
+                      <IoArrowUpOutline
+                        aria-hidden="true"
+                        className="h-4 w-4 rotate-45"
+                      />
+                      {link.title}
+                    </span>
+                  </>
+                );
+
+                return link.external ? (
                   <a
                     key={link.href}
                     href={link.href}
                     target="_blank"
                     rel="noreferrer"
                     onClick={() => setIsOpen(false)}
-                    className="group/footer inline-flex items-center gap-1 transition-opacity hover:opacity-75"
+                    {...shared}
                   >
-                    <IoArrowUpOutline
-                      aria-hidden="true"
-                      className="h-4 w-4 rotate-45"
-                    />
-                    {link.title}
+                    {content}
                   </a>
                 ) : (
                   <Link
                     key={link.href}
                     href={link.href}
                     onClick={(event) => handleLinkClick(event, link.href)}
-                    className="group/footer inline-flex items-center gap-1 transition-opacity hover:opacity-75"
+                    {...shared}
                   >
-                    <IoArrowUpOutline
-                      aria-hidden="true"
-                      className="h-4 w-4 rotate-45"
-                    />
-                    {link.title}
+                    {content}
                   </Link>
-                ),
-              )}
+                );
+              })}
             </div>
           </div>
         </div>
