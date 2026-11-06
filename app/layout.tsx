@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Boldonse, Montserrat } from "next/font/google";
+import { Geist } from "next/font/google";
+import { Boldonse } from "next/font/google";
 import { Stalinist_One } from "next/font/google";
 import { CurvedMenu } from "@/components/curved-menu";
 import { RouteTransition } from "@/components/route-transition";
@@ -8,11 +8,6 @@ import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -24,12 +19,6 @@ const stalinistOne = Stalinist_One({
 
 const boldonse = Boldonse({
   variable: "--font-boldonse",
-  weight: "400",
-  subsets: ["latin"],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
   weight: "400",
   subsets: ["latin"],
 });
@@ -47,9 +36,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${stalinistOne.variable} ${boldonse.variable} ${montserrat.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${stalinistOne.variable} ${boldonse.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-(family-name:--font-geist-mono) bg-black text-zinc-100">
+      <body className="min-h-full flex flex-col font-(family-name:--font-geist-sans) bg-black text-zinc-100">
         {children}
         <RouteTransition />
         <CurvedMenu />

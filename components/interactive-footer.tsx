@@ -10,7 +10,6 @@ import {
 import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
-import { Cal_Sans, Space_Grotesk } from "next/font/google";
 import type { IconType } from "react-icons";
 import { FaSquareXTwitter, FaGithub, FaDiscord } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
@@ -21,16 +20,6 @@ import {
 } from "react-icons/io5";
 
 import { useRouter } from "next/navigation";
-
-const CalSans = Cal_Sans({
-  weight: "400",
-  subsets: ["latin"],
-});
-
-const SpaceGrotesk = Space_Grotesk({
-  weight: "700",
-  subsets: ["latin"],
-});
 
 const contactEmail = "contactericlin@gmail.com";
 
@@ -374,7 +363,7 @@ function VersionHistoryModal({
 
         <p
           id="version-history-title"
-          className={`text-2xl uppercase ${SpaceGrotesk.className}`}
+          className={`text-2xl uppercase font-(family-name:--font-geist-sans)`}
         >
           Version History
         </p>
@@ -581,7 +570,7 @@ export function InteractiveFooter() {
       <div className="relative z-10 grid gap-8 px-5 py-8 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 sm:px-6 sm:py-10 lg:px-10 xl:grid-cols-4 xl:gap-x-16">
         <div className="space-y-4">
           <p
-            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl font-(family-name:--font-geist-sans) font-semibold`}
           >
             Socials
           </p>
@@ -609,7 +598,7 @@ export function InteractiveFooter() {
 
         <div className="space-y-4">
           <p
-            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl font-(family-name:--font-geist-sans) font-semibold`}
           >
             Email Me
           </p>
@@ -621,7 +610,7 @@ export function InteractiveFooter() {
 
         <div className="space-y-4">
           <p
-            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl font-(family-name:--font-geist-sans) font-semibold`}
           >
             Local Time
           </p>
@@ -633,7 +622,7 @@ export function InteractiveFooter() {
 
         <div className="space-y-4">
           <p
-            className={`text-lg uppercase text-white sm:text-2xl ${SpaceGrotesk.className}`}
+            className={`text-lg uppercase text-white sm:text-2xl font-(family-name:--font-geist-sans) font-semibold`}
           >
             Version
           </p>
@@ -650,15 +639,13 @@ export function InteractiveFooter() {
       </div>
 
       <div className="relative z-10 flex w-full items-center justify-center overflow-visible pb-14 lg:pb-[clamp(0.75rem,2vh,2rem)]">
-        <h1
-          className="contact-heading w-full max-w-none text-center text-[clamp(4.5rem,21.5vw,40rem)] leading-[0.78] font-bold tracking-[-0.02em] whitespace-nowrap text-white select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.6)] sm:-ml-8"
-        >
+        <h1 className="contact-heading w-full max-w-none text-center text-[clamp(4.5rem,20.5vw,40rem)] leading-[0.78] font-bold tracking-[-0.02em] whitespace-nowrap text-white select-none drop-shadow-[0_0_10px_rgba(255,255,255,0.6)] sm:-ml-8">
           {Array.from("CONTACT").map((letter, index) => (
             <span
               onClick={() => router.push("/contact")}
               key={index}
               data-contact-letter
-              className={`inline-block cursor-pointer ${CalSans.className}`}
+              className={`inline-block cursor-pointer font-(family-name:--font-geist-sans)`}
               style={{
                 display: "inline-block",
               }}

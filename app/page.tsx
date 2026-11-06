@@ -10,8 +10,6 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Space_Grotesk, Montserrat } from "next/font/google";
-
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -35,16 +33,6 @@ const InteractiveGradFlow = dynamic(
     ),
   { ssr: false },
 );
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  weight: "400",
-  subsets: ["latin"],
-});
 
 type StackItem = {
   label: string;
@@ -1095,7 +1083,7 @@ export default function Home() {
                   </a>
 
                   <div className="ml-auto flex items-center gap-5">
-                    <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
+                    <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-geist-sans) text-zinc-300 lg:flex">
                       <Link
                         href="/about"
                         className="px-5 transition-colors hover:text-white"
@@ -1159,7 +1147,7 @@ export default function Home() {
           <section
             ref={secondSectionRef}
             id="featured-works"
-            className={`relative w-full overflow-visible bg-black text-zinc-100 ${spaceGrotesk.className}`}
+            className={`relative w-full overflow-visible bg-black text-zinc-100 font-(family-name:--font-geist-sans)`}
             style={{ backgroundColor: SECOND_SECTION_BG }}
           >
             <svg
@@ -1299,7 +1287,7 @@ export default function Home() {
           >
             <p
               ref={thirdSectionTextRef}
-              className={`w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 ${spaceGrotesk.className}`}
+              className={`w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 font-(family-name:--font-geist-sans)`}
             >
               {thirdSectionWords.flatMap((word, wordIndex) => {
                 const isLastWord = wordIndex === thirdSectionWords.length - 1;
@@ -1324,7 +1312,7 @@ export default function Home() {
           </section>
           <section
             ref={techSectionRef}
-            className={`relative min-h-screen w-full bg-black px-6 py-20 text-zinc-100 ${spaceGrotesk.className}`}
+            className={`relative min-h-screen w-full bg-black px-6 py-20 text-zinc-100 font-(family-name:--font-geist-sans)`}
           >
             <div className="mr-auto ml-0 w-full max-w-5xl">
               <h2 className="text-left text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[-0.06em] text-zinc-100">
