@@ -30,7 +30,6 @@ const navItems = [
   { title: "Home", href: "/" },
   { title: "About", href: "/about" },
   { title: "Projects", href: "/#featured-works" },
-  { title: "Contact", href: "/contact" },
 ];
 
 const footerLinks = [
@@ -280,9 +279,7 @@ export function CurvedMenu() {
   const footerRafRefs = useRef<Array<number | null>>(
     footerLinks.map(() => null),
   );
-  const footerMotionRef = useRef(
-    footerLinks.map(() => createMagnetState()),
-  );
+  const footerMotionRef = useRef(footerLinks.map(() => createMagnetState()));
   const footerMagnetEnabledRef = useRef(false);
 
   // Magnetism only makes sense on fine-pointer devices without reduced
