@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 import { Navbar } from "@/components/navbar";
+import { PageIntro } from "@/components/page-intro";
 
 export const metadata: Metadata = {
   title: "About | Eric Lin's Portfolio",
@@ -11,12 +12,17 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-black font-sans text-zinc-100">
-      <Navbar />
+    <PageIntro className="flex min-h-screen flex-col overflow-x-clip bg-black font-sans text-zinc-100">
+      <div data-intro="down">
+        <Navbar />
+      </div>
 
       <main className="mx-auto w-full max-w-[1680px] flex-1 px-5 pb-24 pt-12 sm:px-8 sm:pt-16 md:px-12 lg:px-[7vw] lg:pt-24">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-center lg:gap-[clamp(3rem,6vw,7rem)]">
-          <div className="mx-auto w-full max-w-[30rem] shrink-0 lg:mx-0 lg:w-[46%] lg:max-w-[44rem] lg:pt-28">
+          <div
+            data-intro="left"
+            className="mx-auto w-full max-w-[30rem] shrink-0 lg:mx-0 lg:w-[46%] lg:max-w-[44rem] lg:pt-28"
+          >
             <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-900 sm:aspect-[3/4]">
               <Image
                 src="/images/eric-portrait.webp"
@@ -33,19 +39,23 @@ export default function AboutPage() {
             aria-labelledby="about-heading"
             className="flex w-full flex-col lg:w-[45%] lg:max-w-[43rem] lg:pt-28"
           >
-            <p className="text-[0.8rem] tracking-[0.02em] text-zinc-500">
+            <p
+              data-intro="right"
+              className="text-[0.8rem] tracking-[0.02em] text-zinc-500"
+            >
               Eric Lin — EST 2010
             </p>
 
             <h1
               id="about-heading"
+              data-intro="right"
               className="mt-4 flex flex-col text-[clamp(2.6rem,4.8vw,4.75rem)] font-extrabold uppercase leading-[1.02] tracking-[-0.045em] text-white"
             >
               <span>About Me</span>
             </h1>
 
             <div className="mt-8 flex flex-col gap-6 text-pretty text-[1.02rem] leading-[1.7] text-zinc-200 sm:text-[1.08rem] lg:mt-10 [&_a]:text-zinc-200 [&_a]:underline [&_a]:decoration-zinc-600 [&_a]:decoration-1 [&_a]:underline-offset-[5px] [&_a]:transition-colors [&_a:hover]:text-white [&_a:hover]:decoration-white [&_strong]:font-semibold [&_strong]:text-zinc-100">
-              <p>
+              <p data-intro="right">
                 Hi! I am Eric, currently a junior high school student at
                 the&nbsp;
                 <a
@@ -62,7 +72,7 @@ export default function AboutPage() {
                 living in Philadelphia.
               </p>
 
-              <p>
+              <p data-intro="right">
                 I enjoy designing and building{" "}
                 <strong>optimized websites and automated systems</strong>, both
                 on the software and hardware end. Many of my projects involve{" "}
@@ -74,7 +84,7 @@ export default function AboutPage() {
                 are things I&apos;m experienced at.
               </p>
 
-              <p>
+              <p data-intro="right">
                 I&apos;m the{" "}
                 <strong>
                   lead programmer for my school&apos;s FTC robotics team
@@ -91,13 +101,13 @@ export default function AboutPage() {
                 of identifying overlapping cardiac abnormalities.
               </p>
 
-              <p>
+              <p data-intro="right">
                 When I&apos;m away from screens, I love playing basketball and
                 badminton, hiking, cooking, taking long walks at the park, and
                 going to cat cafes.
               </p>
 
-              <p>
+              <p data-intro="right">
                 Favorite games? Modded{" "}
                 <a
                   href="https://www.minecraft.net/en-us"
@@ -120,6 +130,6 @@ export default function AboutPage() {
           </section>
         </div>
       </main>
-    </div>
+    </PageIntro>
   );
 }

@@ -4,6 +4,8 @@ import React from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import { RiSendInsFill } from "react-icons/ri";
 
+import { PageIntro } from "@/components/page-intro";
+
 function ContactForm() {
   const [state, handleSubmit] = useForm("myzyjzge");
   if (state.succeeded) {
@@ -95,7 +97,11 @@ function ContactForm() {
 }
 
 function App() {
-  return <ContactForm />;
+  return (
+    <PageIntro>
+      <ContactForm />
+    </PageIntro>
+  );
 }
 
 export default App;

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Boldonse, Montserrat } from "next/font/google";
 import { Stalinist_One } from "next/font/google";
 import { CurvedMenu } from "@/components/curved-menu";
+import { RouteTransition } from "@/components/route-transition";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -50,6 +51,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-(family-name:--font-geist-mono) bg-black text-zinc-100">
         {children}
+        <RouteTransition />
         <CurvedMenu />
       </body>
     </html>
