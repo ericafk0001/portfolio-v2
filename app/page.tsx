@@ -483,8 +483,9 @@ export default function Home() {
     if (
       Math.abs(invertedState.targetCurveAmount - invertedState.curveAmount) >
         0.05 ||
-      Math.abs(invertedState.targetShadowOpacity - invertedState.shadowOpacity) >
-        0.001
+      Math.abs(
+        invertedState.targetShadowOpacity - invertedState.shadowOpacity,
+      ) > 0.001
     ) {
       unsettled = true;
       invertedState.curveAmount = lerp(
@@ -1083,17 +1084,17 @@ export default function Home() {
             <div ref={headerIntroRef} className="relative z-20">
               <header
                 ref={headerRef}
-                className="relative z-20 border-b-2 border-white/25 bg-transparent backdrop-blur-sm"
+                className="relative z-20 bg-transparent backdrop-blur-sm"
               >
                 <div className="flex h-16 w-full items-center px-3 md:px-5">
-                  <div className="flex items-center">
-                    <a
-                      href="#"
-                      className="font-(family-name:--font-stalinist-one) shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white px-5"
-                    >
-                      ERIC LIN
-                    </a>
-                    <span className="mx-3 h-16 w-px bg-white/20" />
+                  <a
+                    href="#"
+                    className="font-(family-name:--font-stalinist-one) shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white px-5"
+                  >
+                    ERIC LIN
+                  </a>
+
+                  <div className="ml-auto flex items-center gap-5">
                     <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
                       <Link
                         href="/about"
@@ -1110,13 +1111,7 @@ export default function Home() {
                         Projects
                       </a>
                       <span className="h-full w-px bg-white/20" />
-                      <a
-                        href="#"
-                        className="px-5 transition-colors hover:text-white"
-                      >
-                        Honors
-                      </a>
-                      <span className="h-full w-px bg-white/20" />
+
                       <a
                         href="#"
                         className="px-5 transition-colors hover:text-white"
@@ -1132,10 +1127,10 @@ export default function Home() {
                         Resume
                       </a>
                     </nav>
-                  </div>
 
-                  <div className="ml-auto flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
-                    <ContactButton />
+                    <div className="flex items-center text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300">
+                      <ContactButton />
+                    </div>
                   </div>
                 </div>
               </header>
