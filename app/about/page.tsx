@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 
+import { BulgeImage } from "@/components/bulge-image";
 import { Navbar } from "@/components/navbar";
 import { PageIntro } from "@/components/page-intro";
 
@@ -23,14 +23,12 @@ export default function AboutPage() {
             data-intro="left"
             className="mx-auto w-full max-w-[30rem] shrink-0 lg:mx-0 lg:w-[46%] lg:max-w-[44rem] lg:pt-28"
           >
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-900 sm:aspect-[3/4]">
-              <Image
+            <div className="relative aspect-[4/5] w-full bg-black sm:aspect-[3/4]">
+              <BulgeImage
                 src="/images/eric-portrait.webp"
                 alt="Eric Lin"
-                fill
                 sizes="(max-width: 1024px) 100vw, 46vw"
                 loading="eager"
-                className="object-cover"
               />
             </div>
           </div>
