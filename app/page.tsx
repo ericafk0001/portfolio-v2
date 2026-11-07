@@ -55,6 +55,112 @@ gsap.registerPlugin(
 // this and shows the loader again, which is expected.
 let hasPlayedIntro = false;
 
+type CanvasPathPoint = { x: number; y: number };
+
+type CanvasPathSegment = {
+  cp1: CanvasPathPoint;
+  cp2: CanvasPathPoint;
+  end: CanvasPathPoint;
+};
+
+type ScaledCanvasPathSegment = CanvasPathSegment & { length: number };
+
+// Normalised cubic-bezier wave from the Olivier Larose "SVG path on scroll"
+// demo. Each segment's control points are fractions of the canvas.
+const CANVAS_PATH_SEGMENTS: CanvasPathSegment[] = [
+  {
+    cp1: { x: 0.07, y: 0.14 },
+    cp2: { x: 0.17, y: 0.235 },
+    end: { x: 0.28, y: 0.18 },
+  },
+  {
+    cp1: { x: 0.336, y: 0.15 },
+    cp2: { x: 0.38, y: 0.09 },
+    end: { x: 0.38, y: 0.11 },
+  },
+  {
+    cp1: { x: 0.4, y: 0.152 },
+    cp2: { x: 0.2, y: 0.47 },
+    end: { x: 0.2275, y: 0.54 },
+  },
+  {
+    cp1: { x: 0.25, y: 0.62 },
+    cp2: { x: 0.59, y: 0.2364 },
+    end: { x: 0.6475, y: 0.38 },
+  },
+  {
+    cp1: { x: 0.68, y: 0.4684 },
+    cp2: { x: 0.58, y: 0.68 },
+    end: { x: 0.6225, y: 0.78 },
+  },
+  {
+    cp1: { x: 0.65, y: 0.85 },
+    cp2: { x: 0.73, y: 0.75 },
+    end: { x: 0.84, y: 0.79 },
+  },
+  {
+    cp1: { x: 0.925, y: 0.81 },
+    cp2: { x: 0.98, y: 0.9 },
+    end: { x: 1.025, y: 0.97 },
+  },
+];
+
+const CANVAS_PATH_START: CanvasPathPoint = { x: -100, y: 30 };
+
+const sampleCubicBezier = (
+  start: CanvasPathPoint,
+  segment: CanvasPathSegment,
+  t: number,
+): CanvasPathPoint => {
+  const mt = 1 - t;
+  const a = mt * mt * mt;
+  const b = 3 * mt * mt * t;
+  const c = 3 * mt * t * t;
+  const d = t * t * t;
+
+  return {
+    x: a * start.x + b * segment.cp1.x + c * segment.cp2.x + d * segment.end.x,
+    y: a * start.y + b * segment.cp1.y + c * segment.cp2.y + d * segment.end.y,
+  };
+};
+
+const measureCubicBezier = (
+  start: CanvasPathPoint,
+  segment: CanvasPathSegment,
+) => {
+  const steps = 24;
+  let length = 0;
+  let previous = start;
+
+  for (let step = 1; step <= steps; step += 1) {
+    const point = sampleCubicBezier(start, segment, step / steps);
+    length += Math.hypot(point.x - previous.x, point.y - previous.y);
+    previous = point;
+  }
+
+  return length;
+};
+
+const buildCanvasPath = (
+  width: number,
+  height: number,
+): ScaledCanvasPathSegment[] => {
+  let previousEnd = { ...CANVAS_PATH_START };
+
+  return CANVAS_PATH_SEGMENTS.map((segment) => {
+    const scaled: CanvasPathSegment = {
+      cp1: { x: segment.cp1.x * width, y: segment.cp1.y * height },
+      cp2: { x: segment.cp2.x * width, y: segment.cp2.y * height },
+      end: { x: segment.end.x * width, y: segment.end.y * height },
+    };
+
+    const length = measureCubicBezier(previousEnd, scaled);
+    previousEnd = scaled.end;
+
+    return { ...scaled, length };
+  });
+};
+
 export default function Home() {
   const thirdSectionCopy =
     "I specialize in building optimized websites and automated systems, spanning both software and hardware. As a developer who enjoys end-to-end product development, I focus on bringing ideas to life from scratch while navigating obscure requirements and tight timelines. My priorities are fast execution, rigorous system logic, and efficient problem solving.";
@@ -194,6 +300,7 @@ export default function Home() {
   const secondSectionRef = useRef<HTMLElement | null>(null);
   const thirdSectionRef = useRef<HTMLElement | null>(null);
   const thirdSectionTextRef = useRef<HTMLParagraphElement | null>(null);
+  const thirdSectionCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const techSectionRef = useRef<HTMLElement | null>(null);
   const titleMaskRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -837,6 +944,130 @@ export default function Home() {
     };
   }, [allReady]);
 
+  // Progressive canvas stroke behind the third section's paragraph. The path is
+  // revealed with a dash offset driven by scroll progress, mirroring the
+  // "SVG path on scroll" demo but wired into ScrollTrigger.
+  useEffect(() => {
+    if (!allReady) {
+      return;
+    }
+
+    const canvas = thirdSectionCanvasRef.current;
+    const section = thirdSectionRef.current;
+    if (!canvas || !section) {
+      return;
+    }
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      return;
+    }
+
+    let segments: ScaledCanvasPathSegment[] = [];
+    let totalLength = 0;
+    let progress = 0;
+
+    const render = (value: number) => {
+      progress = Math.min(Math.max(value, 0), 1);
+
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      if (!width || !height || segments.length === 0) {
+        return;
+      }
+
+      context.clearRect(0, 0, width, height);
+      context.beginPath();
+      context.moveTo(CANVAS_PATH_START.x, CANVAS_PATH_START.y);
+
+      const drawnLength = totalLength * progress;
+
+      let travelled = 0;
+      for (const segment of segments) {
+        context.bezierCurveTo(
+          segment.cp1.x,
+          segment.cp1.y,
+          segment.cp2.x,
+          segment.cp2.y,
+          segment.end.x,
+          segment.end.y,
+        );
+
+        travelled += segment.length;
+        if (travelled >= drawnLength) {
+          break;
+        }
+      }
+
+      // A gap far longer than the path means only the first `drawnLength`
+      // pixels of the stroke are painted.
+      context.setLineDash([drawnLength, totalLength + 100]);
+      context.stroke();
+      context.setLineDash([]);
+    };
+
+    const measureAndRender = () => {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      if (!width || !height) {
+        return;
+      }
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const stroke = context.createLinearGradient(0, 0, width, 0);
+      stroke.addColorStop(0, "#18181b");
+      stroke.addColorStop(0.5, "#52525b");
+      stroke.addColorStop(1, "#d4d4d8");
+
+      context.strokeStyle = stroke;
+      context.lineWidth = width / 50;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+
+      segments = buildCanvasPath(width, height);
+      totalLength = segments.reduce((sum, segment) => sum + segment.length, 0);
+
+      render(progress);
+    };
+
+    measureAndRender();
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const resizeObserver = new ResizeObserver(() => {
+      measureAndRender();
+    });
+    resizeObserver.observe(canvas);
+
+    if (prefersReducedMotion) {
+      render(1);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+
+    const trigger = ScrollTrigger.create({
+      trigger: section,
+      start: "top 80%",
+      end: "center center",
+      invalidateOnRefresh: true,
+      onRefresh: (self) => render(self.progress),
+      onUpdate: (self) => render(self.progress),
+    });
+
+    return () => {
+      trigger.kill();
+      resizeObserver.disconnect();
+    };
+  }, [allReady]);
+
   useEffect(() => {
     if (!techSectionRef.current) {
       return;
@@ -1282,11 +1513,16 @@ export default function Home() {
           </section>
           <section
             ref={thirdSectionRef}
-            className="flex w-full items-center justify-center bg-black px-6 pt-32 pb-40 text-center text-zinc-100 md:pt-48 md:pb-64"
+            className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black px-6 py-24 text-center text-zinc-100 md:py-32"
           >
+            <canvas
+              ref={thirdSectionCanvasRef}
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+              aria-hidden="true"
+            />
             <p
               ref={thirdSectionTextRef}
-              className={`w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 font-(family-name:--font-geist-sans)`}
+              className={`relative z-10 w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 font-(family-name:--font-geist-sans)`}
             >
               {thirdSectionWords.flatMap((word, wordIndex) => {
                 const isLastWord = wordIndex === thirdSectionWords.length - 1;
