@@ -28,7 +28,7 @@ export function Navbar() {
         <div className="ml-auto flex items-center gap-5">
           <nav
             aria-label="Primary"
-            className="hidden items-center gap-0 font-(family-name:--font-geist-sans) text-xs font-semibold uppercase tracking-[0.16em] text-zinc-300 lg:flex"
+            className="hidden items-center gap-0 font-(family-name:--font-geist-sans) text-s font-semibold tracking-[0.16em] text-zinc-300 lg:flex"
           >
             {navLinks.map((link, index) => {
               const isActive =

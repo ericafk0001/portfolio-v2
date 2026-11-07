@@ -1083,7 +1083,7 @@ export default function Home() {
                   </a>
 
                   <div className="ml-auto flex items-center gap-5">
-                    <nav className="hidden items-center gap-0 text-xs font-semibold uppercase tracking-[0.16em] font-(family-name:--font-geist-sans) text-zinc-300 lg:flex">
+                    <nav className="hidden items-center gap-0 text-s font-semibold tracking-[0.16em] font-(family-name:--font-geist-sans) text-zinc-300 lg:flex">
                       <Link
                         href="/about"
                         className="px-5 transition-colors hover:text-white"

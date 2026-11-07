@@ -22,7 +22,7 @@ export function ContactButton({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className="contact-fill group relative hidden cursor-pointer items-center gap-3 overflow-hidden rounded-[100px] px-5 py-2.5 text-xs font-bold uppercase tracking-[0.18em] text-zinc-900 md:inline-flex"
+      className="contact-fill group relative hidden cursor-pointer items-center gap-3 overflow-hidden rounded-[100px] px-5 py-2.5 text-xs font-semibold tracking-[0.18em] text-zinc-900 md:inline-flex"
     >
       <span aria-hidden="true" className="h-2 w-2 rounded-full bg-black" />
       <span className="relative z-[2] transition-all duration-300 ease-out group-hover:-translate-x-[25px] group-hover:text-white group-focus-visible:-translate-x-[25px] group-focus-visible:text-white">
