@@ -25,6 +25,7 @@ import { SplitText } from "gsap/SplitText";
 import { Loader } from "@/components/loader";
 import { ContactButton } from "@/components/contact-button";
 import { InteractiveFooter } from "@/components/interactive-footer";
+import { TextMask } from "@/components/text-mask";
 
 const InteractiveGradFlow = dynamic(
   () =>
@@ -1307,42 +1308,42 @@ export default function Home() {
                 <div className="flex h-16 w-full items-center px-3 md:px-5">
                   <a
                     href="#"
-                    className="font-(family-name:--font-stalinist-one) shrink-0 text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white px-5"
+                    className="group inline-flex shrink-0 items-center px-5 font-(family-name:--font-stalinist-one) text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white"
                   >
-                    ERIC LIN
+                    <TextMask text="ERIC LIN" />
                   </a>
 
                   <div className="ml-auto flex items-center gap-5">
                     <nav className="hidden items-center gap-0 text-s font-semibold tracking-[0.16em] font-(family-name:--font-geist-sans) text-zinc-300 lg:flex">
                       <Link
                         href="/about"
-                        className="px-5 transition-colors hover:text-white"
+                        className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
-                        About
+                        <TextMask text="About" />
                       </Link>
 
                       <span className="h-full w-px bg-white/20" />
                       <a
                         href="#"
-                        className="px-5 transition-colors hover:text-white"
+                        className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
-                        Projects
+                        <TextMask text="Projects" />
                       </a>
                       <span className="h-full w-px bg-white/20" />
 
                       <a
                         href="#"
-                        className="px-5 transition-colors hover:text-white"
+                        className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
-                        Blog
+                        <TextMask text="Blog" />
                       </a>
                       <span className="h-full w-px bg-white/20" />
                       <a
                         href="/resume.pdf"
                         target="_blank"
-                        className="px-5 transition-colors hover:text-white"
+                        className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
-                        Resume
+                        <TextMask text="Resume" />
                       </a>
                     </nav>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { ContactButton } from "@/components/contact-button";
+import { TextMask } from "@/components/text-mask";
 
 const navLinks = [
   { label: "About", href: "/about" },
@@ -20,9 +21,9 @@ export function Navbar() {
       <div className="flex h-16 w-full items-center px-3 md:px-5">
         <Link
           href="/"
-          className="shrink-0 px-5 font-(family-name:--font-stalinist-one) text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white"
+          className="group inline-flex shrink-0 items-center px-5 font-(family-name:--font-stalinist-one) text-lg font-semibold uppercase tracking-[0.24em] text-zinc-100 transition-colors hover:text-white"
         >
-          ERIC LIN
+          <TextMask text="ERIC LIN" />
         </Link>
 
         <div className="ml-auto flex items-center gap-5">
@@ -33,7 +34,7 @@ export function Navbar() {
             {navLinks.map((link, index) => {
               const isActive =
                 link.href !== "#" && pathname === link.href.split("#")[0];
-              const linkClassName = `px-5 transition-colors hover:text-white ${
+              const linkClassName = `group inline-flex items-center px-5 transition-colors hover:text-white ${
                 isActive ? "text-white" : ""
               }`;
 
@@ -48,11 +49,11 @@ export function Navbar() {
                       aria-current={isActive ? "page" : undefined}
                       className={linkClassName}
                     >
-                      {link.label}
+                      <TextMask text={link.label} />
                     </Link>
                   ) : (
                     <a href={link.href} className={linkClassName}>
-                      {link.label}
+                      <TextMask text={link.label} />
                     </a>
                   )}
                 </Fragment>
@@ -63,9 +64,9 @@ export function Navbar() {
               href="/resume.pdf"
               target="_blank"
               rel="noreferrer"
-              className="px-5 transition-colors hover:text-white"
+              className="group inline-flex items-center px-5 transition-colors hover:text-white"
             >
-              Resume
+              <TextMask text="Resume" />
             </a>
           </nav>
 
