@@ -2,22 +2,31 @@
 
 interface LoaderProps {
   currentStep: string;
-  progress: number;
 }
 
-export function Loader({ currentStep, progress }: LoaderProps) {
-  const clampedProgress = Math.max(0, Math.min(100, progress));
+// Four sprite layers, mirroring the original CodePen loader: two body layers,
+// a tail and a head. Each layer shows one quadrant of the cat sprite and spins
+// into place with its own delay.
+const catParts = [
+  { className: "cat-loader__body", delay: "0.1s" },
+  { className: "cat-loader__body", delay: "0.2s" },
+  { className: "cat-loader__tail", delay: "0.2s" },
+  { className: "cat-loader__head", delay: "0s" },
+];
 
+export function Loader({ currentStep }: LoaderProps) {
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black">
-      <div className="w-80 max-w-[70vw]">
-        <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/15">
+    <div className="cat-loader-shell fixed inset-0 z-[200] flex items-center justify-center">
+      <div className="cat-loader" aria-hidden="true">
+        {catParts.map((part, index) => (
           <div
-            className="h-full rounded-full bg-white transition-[width] duration-300 ease-out"
-            style={{ width: `${clampedProgress}%` }}
+            key={`${part.className}-${index}`}
+            className={`cat-loader__part ${part.className}`}
+            style={{ animationDelay: part.delay }}
           />
-        </div>
+        ))}
       </div>
+
       <p
         role="status"
         aria-live="polite"

@@ -1280,8 +1280,6 @@ export default function Home() {
     { label: "Final render pass...", done: settleReady },
   ];
 
-  const completedSteps = steps.filter((step) => step.done).length;
-  const progress = Math.round((completedSteps / steps.length) * 100);
   const pendingStep = steps.find((step) => !step.done);
   const currentStep = pendingStep?.label ?? "Ready";
   const isLoading = !skipIntro && (!allReady || isLoaderVisible);
@@ -1291,7 +1289,7 @@ export default function Home() {
     <>
       {isLoading && (
         <div ref={loaderRef}>
-          <Loader currentStep={currentStep} progress={progress} />
+          <Loader currentStep={currentStep} />
         </div>
       )}
       <div ref={smoothWrapperRef} id="smooth-wrapper" className="relative">
