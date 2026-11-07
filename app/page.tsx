@@ -69,8 +69,7 @@ export default function Home() {
       {
         title: "Death Note Mod",
         period: "Jan 2025 - Present",
-        description:
-          "An interactive Death Note-inspired mod with custom visuals, animations, and game logic.",
+        description: "A interactive Death Note-inspired mod.",
         href: "https://github.com/ericafk0001/Death-Note-1.21.X",
         image: "images/deathnote.webp",
       },
@@ -78,7 +77,7 @@ export default function Home() {
         title: "Anime identifier",
         period: "Nov 2024 - Nov 2024",
         description:
-          "An image recognition tool that identifies anime characters along with the series they appear in.",
+          "An image recognition tool that identifies anime from a single frame or screenshot.",
         href: "https://github.com/ericafk0001/anime-identifier",
         image: "images/anime.png",
       },
@@ -86,7 +85,7 @@ export default function Home() {
         title: "PocketDoc",
         period: "April 2026 - April 2026",
         description:
-          "A pocket-sized document tool built to keep files organized and easy to access on the go.",
+          "A application that allows users to quickly identify injuries and receive first aid instructions.",
         href: "https://github.com/ericafk0001/PocketDoc",
         image: "images/pocketdoc.png",
       },
