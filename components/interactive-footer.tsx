@@ -633,7 +633,7 @@ export function InteractiveFooter() {
             aria-expanded={versionModalOpen}
             className="inline-flex w-fit cursor-pointer items-center gap-2 text-2xl text-white transition-opacity duration-200 hover:opacity-75 sm:text-4xl"
           >
-            .v 2.0
+            .v 2.0b
           </button>
         </div>
       </div>
