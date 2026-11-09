@@ -9,7 +9,7 @@ import { TextMask } from "@/components/text-mask";
 
 const navLinks = [
   { label: "About", href: "/about" },
-  { label: "Projects", href: "/#featured-works" },
+  { label: "Projects", href: "/projects" },
   { label: "Blog", href: "#" },
 ];
 

@@ -29,7 +29,7 @@ const MENU_EASE = "power4.inOut";
 const navItems = [
   { title: "Home", href: "/" },
   { title: "About", href: "/about" },
-  { title: "Projects", href: "/#featured-works" },
+  { title: "Projects", href: "/projects" },
 ];
 
 const footerLinks = [

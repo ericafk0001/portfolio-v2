@@ -26,6 +26,7 @@ import { Loader } from "@/components/loader";
 import { ContactButton } from "@/components/contact-button";
 import { InteractiveFooter } from "@/components/interactive-footer";
 import { TextMask } from "@/components/text-mask";
+import { projects } from "@/lib/projects";
 
 const InteractiveGradFlow = dynamic(
   () =>
@@ -171,35 +172,6 @@ export default function Home() {
   const techWebDevText = "Web Dev";
   const techDesignText = "Design";
 
-  const featuredWorks = useMemo(
-    () => [
-      {
-        title: "Death Note Mod",
-        period: "Jan 2025 - Present",
-        description: "A interactive Death Note-inspired mod.",
-        href: "https://github.com/ericafk0001/Death-Note-1.21.X",
-        image: "images/deathnote.webp",
-      },
-      {
-        title: "Anime identifier",
-        period: "Nov 2024 - Nov 2024",
-        description:
-          "An image recognition tool that identifies anime from a single frame or screenshot.",
-        href: "https://github.com/ericafk0001/anime-identifier",
-        image: "images/anime.png",
-      },
-      {
-        title: "PocketDoc",
-        period: "April 2026 - April 2026",
-        description:
-          "A application that allows users to quickly identify injuries and receive first aid instructions.",
-        href: "https://github.com/ericafk0001/PocketDoc",
-        image: "images/pocketdoc.png",
-      },
-    ],
-    [],
-  );
-
   const thirdSectionWords = useMemo(
     () => thirdSectionCopy.trim().split(/\s+/),
     [thirdSectionCopy],
@@ -246,6 +218,7 @@ export default function Home() {
   const designStackItems = useMemo<StackItem[]>(
     () => [
       { label: "Figma", iconSrc: "/stack-icons/figma.png" },
+      { label: "Penpot", iconSrc: "/stack-icons/penpot.webp" },
       { label: "GIMP", iconSrc: "/stack-icons/gimp.png" },
       { label: "Inkspace", iconSrc: "/stack-icons/inkspace.png" },
     ],
@@ -385,57 +358,60 @@ export default function Home() {
     button.style.boxShadow = `0 ${Math.max(10, scale * 16)}px ${Math.max(24, scale * 32)}px rgba(0, 0, 0, ${0.16 + (scale - 1) * 1.8})`;
   }, []);
 
-  const stepMoreProjectsMotion = useCallback(() => {
-    const state = moreProjectsMotionRef.current;
+  const stepMoreProjectsMotion = useCallback(
+    function stepMoreProjectsMotion() {
+      const state = moreProjectsMotionRef.current;
 
-    const stiffness = 0.14;
-    const damping = state.target.scale > 1.001 ? 0.74 : 0.7;
+      const stiffness = 0.14;
+      const damping = state.target.scale > 1.001 ? 0.74 : 0.7;
 
-    const advance = (key: "x" | "y" | "rotation" | "scale") => {
-      state.velocity[key] +=
-        (state.target[key] - state.current[key]) * stiffness;
-      state.velocity[key] *= damping;
-      state.current[key] += state.velocity[key];
-    };
+      const advance = (key: "x" | "y" | "rotation" | "scale") => {
+        state.velocity[key] +=
+          (state.target[key] - state.current[key]) * stiffness;
+        state.velocity[key] *= damping;
+        state.current[key] += state.velocity[key];
+      };
 
-    advance("x");
-    advance("y");
-    advance("rotation");
-    advance("scale");
+      advance("x");
+      advance("y");
+      advance("rotation");
+      advance("scale");
 
-    renderMoreProjectsMotion();
+      renderMoreProjectsMotion();
 
-    const isSettled =
-      Math.abs(state.current.x) < 0.15 &&
-      Math.abs(state.current.y) < 0.15 &&
-      Math.abs(state.current.rotation) < 0.15 &&
-      Math.abs(state.current.scale - 1) < 0.002 &&
-      Math.abs(state.velocity.x) < 0.05 &&
-      Math.abs(state.velocity.y) < 0.05 &&
-      Math.abs(state.velocity.rotation) < 0.05 &&
-      Math.abs(state.velocity.scale) < 0.0006;
+      const isSettled =
+        Math.abs(state.current.x) < 0.15 &&
+        Math.abs(state.current.y) < 0.15 &&
+        Math.abs(state.current.rotation) < 0.15 &&
+        Math.abs(state.current.scale - 1) < 0.002 &&
+        Math.abs(state.velocity.x) < 0.05 &&
+        Math.abs(state.velocity.y) < 0.05 &&
+        Math.abs(state.velocity.rotation) < 0.05 &&
+        Math.abs(state.velocity.scale) < 0.0006;
 
-    if (isSettled) {
-      const button = moreProjectsButtonRef.current;
-      const text = moreProjectsTextRef.current;
+      if (isSettled) {
+        const button = moreProjectsButtonRef.current;
+        const text = moreProjectsTextRef.current;
 
-      if (button) {
-        button.style.transform = "";
-        button.style.boxShadow = "";
+        if (button) {
+          button.style.transform = "";
+          button.style.boxShadow = "";
+        }
+
+        if (text) {
+          text.style.transform = "";
+        }
+
+        moreProjectsRafRef.current = null;
+        return;
       }
 
-      if (text) {
-        text.style.transform = "";
-      }
-
-      moreProjectsRafRef.current = null;
-      return;
-    }
-
-    moreProjectsRafRef.current = window.requestAnimationFrame(
-      stepMoreProjectsMotion,
-    );
-  }, [renderMoreProjectsMotion]);
+      moreProjectsRafRef.current = window.requestAnimationFrame(
+        stepMoreProjectsMotion,
+      );
+    },
+    [renderMoreProjectsMotion],
+  );
 
   const startMoreProjectsMotion = useCallback(() => {
     if (moreProjectsRafRef.current !== null) {
@@ -484,7 +460,7 @@ export default function Home() {
     state.velocity.scale -= (state.current.scale - 1) * 0.48;
 
     startMoreProjectsMotion();
-  }, []);
+  }, [startMoreProjectsMotion]);
 
   const lerp = useCallback(
     (x: number, y: number, a: number) => x * (1 - a) + y * a,
@@ -1249,7 +1225,7 @@ export default function Home() {
   }, [updateInvertedPathForScroll]);
 
   useEffect(() => {
-    const preloadedImages = featuredWorks.map((project) => {
+    const preloadedImages = projects.map((project) => {
       const image = new Image();
       image.src = project.image;
       return image;
@@ -1260,7 +1236,7 @@ export default function Home() {
         image.src = "";
       });
     };
-  }, [featuredWorks]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -1321,12 +1297,12 @@ export default function Home() {
                       </Link>
 
                       <span className="h-full w-px bg-white/20" />
-                      <a
-                        href="#"
+                      <Link
+                        href="/projects"
                         className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
                         <TextMask text="Projects" />
-                      </a>
+                      </Link>
                       <span className="h-full w-px bg-white/20" />
 
                       <a
@@ -1434,7 +1410,7 @@ export default function Home() {
               </h2>
 
               <div className="mt-10 border-y border-white/20">
-                {featuredWorks.map((project) => (
+                {projects.map((project) => (
                   <a
                     key={project.title}
                     href={project.href}
@@ -1492,9 +1468,9 @@ export default function Home() {
               </div>
 
               <div className="flex justify-center pt-10">
-                <a
+                <Link
                   ref={moreProjectsButtonRef}
-                  href="#"
+                  href="/projects"
                   className="inline-flex items-center justify-center rounded-full border border-white/70 px-10 py-4 text-sm font-medium tracking-[0.01em] text-zinc-100 transition-[background-color,color,border-color] duration-200 ease-out will-change-transform hover:bg-white hover:text-black"
                   onPointerEnter={updateMoreProjectsButtonPosition}
                   onPointerMove={updateMoreProjectsButtonPosition}
@@ -1506,7 +1482,7 @@ export default function Home() {
                   >
                     More Projects
                   </span>
-                </a>
+                </Link>
               </div>
             </div>
           </section>
@@ -1690,7 +1666,9 @@ export default function Home() {
                         <img
                           src={iconSrc}
                           alt={`${label} icon`}
-                          className="h-11 w-11 object-contain"
+                          className={`h-11 w-11 object-contain ${
+                            label === "Penpot" ? "invert" : ""
+                          }`}
                           loading="lazy"
                           decoding="async"
                         />
