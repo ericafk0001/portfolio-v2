@@ -19,7 +19,7 @@ export const projects: Project[] = [
     description: "An interactive Death Note-inspired mod.",
     href: "https://github.com/ericafk0001/Death-Note-1.21.X",
     image: "/images/deathnote.webp",
-    tags: ["Java", "Game Mod", "UI"],
+    tags: ["Java", "Game Mod"],
     category: "Minecraft Mod",
   },
   {
@@ -30,7 +30,7 @@ export const projects: Project[] = [
     href: "https://github.com/ericafk0001/anime-identifier",
     image: "/images/anime.png",
     tags: ["Python", "Computer Vision", "API"],
-    category: "AI Tool",
+    category: "Web App",
   },
   {
     title: "PocketDoc",
@@ -39,7 +39,7 @@ export const projects: Project[] = [
       "An application that allows users to quickly identify injuries and receive first aid instructions.",
     href: "https://github.com/ericafk0001/PocketDoc",
     image: "/images/pocketdoc.png",
-    tags: ["AI", "Product Design", "Web"],
-    category: "Health App",
+    tags: ["AI", "ML", "TensorFlow"],
+    category: "Web App",
   },
 ];
