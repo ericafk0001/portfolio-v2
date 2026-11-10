@@ -189,7 +189,7 @@ export function ProjectRow({ project }: { project: Project }) {
   }, []);
 
   return (
-    <li data-intro="up" className="block pb-[1px]">
+    <li data-intro="up" data-project-item className="block pb-[1px]">
       <a
         ref={rowRef}
         data-project-row
