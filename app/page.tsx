@@ -1306,7 +1306,7 @@ export default function Home() {
                       <span className="h-full w-px bg-white/20" />
 
                       <a
-                        href="#"
+                        href="/blog"
                         className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
                         <TextMask text="Blog" />

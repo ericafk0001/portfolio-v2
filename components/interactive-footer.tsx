@@ -661,7 +661,7 @@ export function InteractiveFooter() {
           type="button"
           onClick={handleBackToTop}
           aria-label="Back to top"
-          className="group pointer-events-auto absolute bottom-3 right-4 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-white/70 transition-colors duration-200 hover:text-white sm:bottom-5 sm:right-4"
+          className="group pointer-events-auto absolute bottom-0 right-0 inline-flex items-center gap-2 text-xl font-semibold uppercase tracking-[0.18em] text-white transition-colors duration-200 hover:text-white"
         >
           <span>Back to top</span>
           <IoArrowUpOutline
