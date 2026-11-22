@@ -6,7 +6,7 @@ readTime: 1
 tags:
   - web development
   - ui/ux
-image: /images/eric-portrait.webp
+image: /images/biscuit.jpg
 ---
 
 hey! this is a work in progress, check in later.
