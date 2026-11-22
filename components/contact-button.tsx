@@ -5,6 +5,8 @@ type ContactButtonProps = {
   href?: string;
   /** Marks the link as the current page for assistive tech. */
   active?: boolean;
+  /** The light variant adds a hairline border for cream backgrounds. */
+  variant?: "dark" | "light";
 };
 
 /**
@@ -17,20 +19,25 @@ type ContactButtonProps = {
 export function ContactButton({
   href = "/contact",
   active = false,
+  variant = "dark",
 }: ContactButtonProps) {
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className="contact-fill group relative hidden cursor-pointer items-center gap-3 overflow-hidden rounded-[100px] px-5 py-2.5 text-xs font-semibold tracking-[0.18em] text-zinc-900 md:inline-flex"
+      className={`contact-fill group relative hidden cursor-pointer items-center gap-3 overflow-hidden rounded-[100px] border px-5 py-2.5 text-xs font-semibold tracking-[0.18em] text-zinc-900 md:inline-flex ${
+        variant === "light"
+          ? "border-black/15 shadow-[0_0px_24px_rgba(0,0,0,0.3)]"
+          : "border-transparent"
+      }`}
     >
       <span aria-hidden="true" className="h-2 w-2 rounded-full bg-black" />
-      <span className="relative z-[2] transition-all duration-300 ease-out group-hover:-translate-x-[25px] group-hover:text-white group-focus-visible:-translate-x-[25px] group-focus-visible:text-white">
+      <span className="relative z-2 transition-all duration-300 ease-out group-hover:-translate-x-6.25 group-hover:text-white group-focus-visible:-translate-x-6.25 group-focus-visible:text-white">
         Contact
       </span>
       <span
         aria-hidden="true"
-        className="absolute top-1/2 left-full z-[2] -mt-2 transition-all duration-300 ease-out group-hover:-translate-x-[36px] group-focus-visible:-translate-x-[36px]"
+        className="absolute top-1/2 left-full z-2 -mt-2 transition-all duration-300 ease-out group-hover:-translate-x-9 group-focus-visible:-translate-x-9"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path

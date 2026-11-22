@@ -5,12 +5,12 @@ export type Project = {
   href: string;
   image: string;
   tags: string[];
-  category: string;
+  time: string;
 };
 
 /**
  * Shared project data used by the homepage's featured list and the dedicated
- * projects page. Keep the tags/category copy here so both views stay in sync.
+ * projects page. Keep the tags/time copy here so both views stay in sync.
  */
 export const projects: Project[] = [
   {
@@ -20,7 +20,7 @@ export const projects: Project[] = [
     href: "https://github.com/ericafk0001/Death-Note-1.21.X",
     image: "/images/deathnote.webp",
     tags: ["Java", "Game Mod"],
-    category: "Minecraft Mod",
+    time: "Minecraft Mod",
   },
   {
     title: "Anime identifier",
@@ -30,7 +30,7 @@ export const projects: Project[] = [
     href: "https://github.com/ericafk0001/anime-identifier",
     image: "/images/anime.png",
     tags: ["Python", "Computer Vision", "API"],
-    category: "Web App",
+    time: "Web App",
   },
   {
     title: "PocketDoc",
@@ -40,6 +40,6 @@ export const projects: Project[] = [
     href: "https://github.com/ericafk0001/PocketDoc",
     image: "/images/pocketdoc.png",
     tags: ["AI", "ML", "TensorFlow"],
-    category: "Web App",
+    time: "Web App",
   },
 ];

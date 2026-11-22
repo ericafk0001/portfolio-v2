@@ -1288,7 +1288,7 @@ export default function Home() {
                   </a>
 
                   <div className="ml-auto flex items-center gap-5">
-                    <nav className="hidden items-center gap-0 text-s font-semibold tracking-[0.16em] font-(family-name:--font-geist-sans) text-zinc-300 lg:flex">
+                    <nav className="hidden items-center gap-0 text-s font-semibold tracking-[0.16em] font-(family-name:--font-montserrat) text-zinc-300 lg:flex">
                       <Link
                         href="/about"
                         className="group inline-flex items-center px-5 transition-colors hover:text-white"
@@ -1305,12 +1305,12 @@ export default function Home() {
                       </Link>
                       <span className="h-full w-px bg-white/20" />
 
-                      <a
+                      <Link
                         href="/blog"
                         className="group inline-flex items-center px-5 transition-colors hover:text-white"
                       >
                         <TextMask text="Blog" />
-                      </a>
+                      </Link>
                       <span className="h-full w-px bg-white/20" />
                       <a
                         href="/resume.pdf"
@@ -1405,7 +1405,7 @@ export default function Home() {
               />
             </svg>
             <div className="relative z-10 px-4 pb-24 pt-8 sm:px-6 md:px-8 lg:px-10">
-              <h2 className="text-[clamp(2.75rem,4.4vw,4.6rem)] font-medium tracking-[-0.06em] text-zinc-100">
+              <h2 className="font-(family-name:--font-montserrat) text-[clamp(2.75rem,4.4vw,4.6rem)] font-medium tracking-[-0.06em] text-zinc-100">
                 Featured Works
               </h2>
 
@@ -1435,7 +1435,7 @@ export default function Home() {
                     }}
                   >
                     <div className="md:hidden">
-                      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-white/10 bg-zinc-900">
+                      <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-white/10 bg-zinc-900">
                         <img
                           src={project.image}
                           alt={`${project.title} preview`}
@@ -1444,7 +1444,7 @@ export default function Home() {
                           decoding="async"
                         />
                       </div>
-                      <h3 className="mt-4 text-xl leading-tight tracking-[-0.04em] text-zinc-100">
+                      <h3 className="mt-4 font-(family-name:--font-montserrat) text-xl leading-tight tracking-[-0.04em] text-zinc-100">
                         {project.title}
                       </h3>
                       <p className="mt-2 text-sm leading-relaxed text-zinc-400">
@@ -1497,7 +1497,7 @@ export default function Home() {
             />
             <p
               ref={thirdSectionTextRef}
-              className={`relative z-10 w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 font-(family-name:--font-geist-sans)`}
+              className={`relative z-10 w-full max-w-6xl text-[clamp(2rem,3vw,3.4rem)] leading-[0.98] tracking-[-0.06em] text-zinc-200 font-(family-name:--font-montserrat)`}
             >
               {thirdSectionWords.flatMap((word, wordIndex) => {
                 const isLastWord = wordIndex === thirdSectionWords.length - 1;
@@ -1525,7 +1525,7 @@ export default function Home() {
             className={`relative min-h-screen w-full bg-black px-6 py-20 text-zinc-100 font-(family-name:--font-geist-sans)`}
           >
             <div className="mr-auto ml-0 w-full max-w-5xl">
-              <h2 className="text-left text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[-0.06em] text-zinc-100">
+              <h2 className="font-(family-name:--font-montserrat) text-left text-[clamp(2.5rem,6vw,5rem)] font-medium tracking-[-0.06em] text-zinc-100">
                 {techHeaderChars.map((char, index) => (
                   <span
                     key={`tech-header-char-${index}`}
@@ -1539,7 +1539,7 @@ export default function Home() {
 
               <div className="mt-12 space-y-10">
                 <div className="text-left">
-                  <h3 className="text-4xl font-semibold text-zinc-200">
+                  <h3 className="font-(family-name:--font-montserrat) text-4xl font-semibold text-zinc-200">
                     {techProgrammingChars.map((char, index) => (
                       <span
                         key={`tech-programming-char-${index}`}
@@ -1575,7 +1575,7 @@ export default function Home() {
                 </div>
 
                 <div className="text-left">
-                  <h3 className="text-4xl font-semibold text-zinc-200">
+                  <h3 className="font-(family-name:--font-montserrat) text-4xl font-semibold text-zinc-200">
                     {techWorkflowChars.map((char, index) => (
                       <span
                         key={`tech-workflow-char-${index}`}
@@ -1611,7 +1611,7 @@ export default function Home() {
                 </div>
 
                 <div className="text-left">
-                  <h3 className="text-4xl font-semibold text-zinc-200">
+                  <h3 className="font-(family-name:--font-montserrat) text-4xl font-semibold text-zinc-200">
                     {techWebDevChars.map((char, index) => (
                       <span
                         key={`tech-web-dev-char-${index}`}
@@ -1645,7 +1645,7 @@ export default function Home() {
                 </div>
 
                 <div className="text-left">
-                  <h3 className="text-4xl font-semibold text-zinc-200">
+                  <h3 className="font-(family-name:--font-montserrat) text-4xl font-semibold text-zinc-200">
                     {techDesignChars.map((char, index) => (
                       <span
                         key={`tech-design-char-${index}`}

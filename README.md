@@ -5,6 +5,8 @@ A website to showcase my work and a little about myself! Built with [Next](https
 ## Fonts
 
 [Geist](https://vercel.com/font)
+[Montserrat](https://fonts.google.com/specimen/Montserrat)
+[Boldonse](https://fonts.google.com/specimen/Boldonse?preview.script=Latn)
 
 ## Deployment
 

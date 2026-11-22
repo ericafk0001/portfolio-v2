@@ -169,7 +169,7 @@ export function RouteTransition() {
     <div
       ref={overlayRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[180] bg-black opacity-0"
+      className="pointer-events-none fixed inset-0 z-180 bg-black opacity-0"
       style={{ visibility: "hidden" }}
     />
   );

@@ -6,8 +6,7 @@ import { PageIntro } from "@/components/page-intro";
 
 export const metadata: Metadata = {
   title: "About | Eric Lin's Portfolio",
-  description:
-    "Learn more about Eric Lin, a student at the Academy at Palumbo interested in computer science, artificial intelligence, and software development.",
+  description: "Get to know Eric Lin!",
 };
 
 export default function AboutPage() {
@@ -17,13 +16,13 @@ export default function AboutPage() {
         <Navbar />
       </div>
 
-      <main className="mx-auto w-full max-w-[1680px] flex-1 px-5 pb-24 pt-12 sm:px-8 sm:pt-16 md:px-12 lg:px-[7vw] lg:pt-24">
+      <main className="mx-auto w-full max-w-420 flex-1 px-5 pb-24 pt-12 sm:px-8 sm:pt-16 md:px-12 lg:px-[7vw] lg:pt-24">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-center lg:gap-[clamp(3rem,6vw,7rem)]">
           <div
             data-intro="left"
-            className="mx-auto w-full max-w-[30rem] shrink-0 lg:mx-0 lg:w-[46%] lg:max-w-[44rem] lg:pt-28"
+            className="mx-auto w-full max-w-120 shrink-0 lg:mx-0 lg:w-[46%] lg:max-w-176 lg:pt-28"
           >
-            <div className="relative aspect-[4/5] w-full bg-black sm:aspect-[3/4]">
+            <div className="relative aspect-4/5 w-full bg-black sm:aspect-3/4">
               <BulgeImage
                 src="/images/eric-portrait.webp"
                 alt="Eric Lin"
@@ -35,7 +34,7 @@ export default function AboutPage() {
 
           <section
             aria-labelledby="about-heading"
-            className="flex w-full flex-col lg:w-[45%] lg:max-w-[43rem] lg:pt-28"
+            className="flex w-full flex-col lg:w-[45%] lg:max-w-172 lg:pt-28"
           >
             <p
               data-intro="right"
@@ -47,7 +46,7 @@ export default function AboutPage() {
             <h1
               id="about-heading"
               data-intro="right"
-              className="mt-4 flex flex-col text-[clamp(2.6rem,4.8vw,4.75rem)] font-extrabold uppercase leading-[1.02] tracking-[-0.045em] text-white"
+              className="mt-4 flex flex-col font-(family-name:--font-montserrat) text-[clamp(2.6rem,4.8vw,4.75rem)] font-extrabold uppercase leading-[1.02] tracking-[-0.045em] text-white"
             >
               <span>About Me</span>
             </h1>

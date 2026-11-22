@@ -7,8 +7,7 @@ import { projects } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "Projects | Eric Lin's Portfolio",
-  description:
-    "Selected software and design projects by Eric Lin, including Death Note Mod, Anime identifier, and PocketDoc.",
+  description: "Some personal projects that I have worked on.",
 };
 
 export default function ProjectsPage() {
@@ -18,8 +17,8 @@ export default function ProjectsPage() {
         <Navbar />
       </div>
 
-      <main className="mx-auto w-full max-w-520 flex-1 px-5 py-[64px] md:px-[40px] md:py-[120px]">
-        <h1 className="sr-only">Projects</h1>
+      <main className="mx-auto w-full max-w-520 flex-1 px-5 py-16 md:px-10 md:py-30">
+        <h1 className="font-(family-name:--font-montserrat) sr-only">Projects</h1>
 
         <ProjectsList projects={projects} />
       </main>

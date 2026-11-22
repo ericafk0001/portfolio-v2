@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Boldonse } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { Stalinist_One } from "next/font/google";
+import localFont from "next/font/local";
 import { CurvedMenu } from "@/components/curved-menu";
 import { RouteTransition } from "@/components/route-transition";
 import "./globals.css";
@@ -17,9 +18,15 @@ const stalinistOne = Stalinist_One({
   subsets: ["latin"],
 });
 
-const boldonse = Boldonse({
+const boldonse = localFont({
+  src: "./fonts/Boldonse-Regular.ttf",
   variable: "--font-boldonse",
-  weight: "400",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  weight: ["400", "500", "600", "700", "800"],
   subsets: ["latin"],
 });
 
@@ -36,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${stalinistOne.variable} ${boldonse.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${stalinistOne.variable} ${boldonse.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-(family-name:--font-geist-sans) bg-black text-zinc-100">
         {children}

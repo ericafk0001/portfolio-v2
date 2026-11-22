@@ -16,7 +16,7 @@ const catParts = [
 
 export function Loader({ currentStep }: LoaderProps) {
   return (
-    <div className="cat-loader-shell fixed inset-0 z-[200] flex items-center justify-center">
+    <div className="cat-loader-shell fixed inset-0 z-200 flex items-center justify-center">
       <div className="cat-loader" aria-hidden="true">
         {catParts.map((part, index) => (
           <div

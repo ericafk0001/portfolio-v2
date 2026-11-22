@@ -288,7 +288,7 @@ export function ProjectsList({ projects }: { projects: Project[] }) {
       >
         <div
           data-project-frame
-          className="relative aspect-[4/5] overflow-hidden"
+          className="relative aspect-4/5 overflow-hidden"
           style={{ width: "min(25vw, 40vh, 420px)" }}
         >
           {projects.map((project) => (

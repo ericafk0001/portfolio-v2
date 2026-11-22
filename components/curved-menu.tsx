@@ -30,6 +30,7 @@ const navItems = [
   { title: "Home", href: "/" },
   { title: "About", href: "/about" },
   { title: "Projects", href: "/projects" },
+  { title: "Blog", href: "/blog" },
 ];
 
 const footerLinks = [
@@ -695,7 +696,7 @@ export function CurvedMenu() {
           transformOrigin: "50% 50%",
           willChange: "opacity, transform",
         }}
-        className="fixed right-4 top-4 z-[120] sm:right-6 sm:top-6"
+        className="fixed right-4 top-4 z-120 sm:right-6 sm:top-6"
       >
         <button
           ref={toggleRef}
@@ -715,15 +716,15 @@ export function CurvedMenu() {
         >
           <span
             ref={toggleInnerRef}
-            className="flex h-[18px] w-9 flex-col items-center justify-center gap-[6px] will-change-transform"
+            className="flex h-4.5 w-9 flex-col items-center justify-center gap-1.5 will-change-transform"
           >
             <span
-              className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
+              className={`h-0.5 w-9 bg-current transition-transform duration-300 ease-out ${
                 isOpen ? "translate-y-[3.25px] rotate-45" : ""
               }`}
             />
             <span
-              className={`h-[2px] w-9 bg-current transition-transform duration-300 ease-out ${
+              className={`h-0.5 w-9 bg-current transition-transform duration-300 ease-out ${
                 isOpen ? "-translate-y-[3.25px] -rotate-45" : ""
               }`}
             />
@@ -746,7 +747,7 @@ export function CurvedMenu() {
           backdropFilter: isOpen ? "blur(3px)" : "blur(0px)",
           WebkitBackdropFilter: isOpen ? "blur(3px)" : "blur(0px)",
         }}
-        className={`fixed inset-0 z-[100] flex justify-end transition-[backdrop-filter] duration-500 ease-out ${
+        className={`fixed inset-0 z-100 flex justify-end transition-[backdrop-filter] duration-500 ease-out ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
@@ -754,11 +755,11 @@ export function CurvedMenu() {
           ref={panelRef}
           tabIndex={-1}
           style={{ transform: "translateX(calc(100% + 100px))" }}
-          className="relative flex h-[100dvh] w-[calc(100%_-_12px)] max-w-[34rem] flex-col bg-[#141414] text-zinc-100 shadow-[-30px_0_70px_rgba(0,0,0,0.45)] outline-none"
+          className="relative flex h-dvh w-[calc(100%-12px)] max-w-136 flex-col bg-[#141414] text-zinc-100 shadow-[-30px_0_70px_rgba(0,0,0,0.45)] outline-none"
         >
           <svg
             aria-hidden="true"
-            className="pointer-events-none absolute top-0 -left-[99px] h-full w-[100px]"
+            className="pointer-events-none absolute top-0 -left-24.75 h-full w-25"
           >
             <path ref={curveRef} fill={PANEL_BG} />
           </svg>

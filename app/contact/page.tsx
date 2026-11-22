@@ -12,7 +12,7 @@ function ContactForm() {
     return (
       <div className="min-h-screen bg-[#000000] px-6 py-16 text-[#f4f1ea] sm:px-10 lg:px-16">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
-          <h1 className="text-xl font-semibold tracking-tight text-[#f4f1ea] sm:text-6xl lg:text-10xl">
+          <h1 className="font-(family-name:--font-montserrat) text-xl font-semibold tracking-tight text-[#f4f1ea] sm:text-6xl lg:text-10xl">
             Let&apos;s Talk!
           </h1>
           <p className="max-w-2xl text-lg text-[#c9c3ba]">
@@ -25,7 +25,7 @@ function ContactForm() {
   return (
     <div className="min-h-screen bg-[#000000] px-6 py-16 text-[#f4f1ea] sm:px-10 lg:px-16">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
-        <h1 className="text-6xl font-semibold tracking-tight text-[#f4f1ea] sm:text-[8rem] lg:text-[10rem]">
+        <h1 className="font-(family-name:--font-montserrat) text-6xl font-semibold tracking-tight text-[#f4f1ea] sm:text-[8rem] lg:text-[10rem]">
           Let&apos;s Talk!
         </h1>
 

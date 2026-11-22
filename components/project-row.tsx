@@ -189,18 +189,18 @@ export function ProjectRow({ project }: { project: Project }) {
   }, []);
 
   return (
-    <li data-intro="up" data-project-item className="block pb-[1px]">
+    <li data-intro="up" data-project-item className="block pb-px">
       <a
         ref={rowRef}
         data-project-row
         href={project.href}
         target="_blank"
         rel="noreferrer"
-        aria-label={`${project.title} — ${project.category}`}
+        aria-label={`${project.title} — ${project.time}`}
         className="flex focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       >
-        <div className="grid w-full grid-cols-12 items-center gap-x-[24px] pt-[24px] md:pt-[40px]">
-          <h2 className="relative col-span-10 overflow-hidden text-[24px] font-medium leading-[1.1] tracking-[-0.03em] text-zinc-100 md:col-span-6 md:text-6xl">
+        <div className="grid w-full grid-cols-12 items-center gap-x-6 pt-6 md:pt-10">
+          <h2 className="relative col-span-10 font-(family-name:--font-montserrat) overflow-hidden text-[24px] font-medium leading-[1.1] tracking-[-0.03em] text-zinc-100 md:col-span-6 md:text-6xl">
             <RollTitle text={project.title} />
           </h2>
 
@@ -223,9 +223,9 @@ export function ProjectRow({ project }: { project: Project }) {
             <span
               ref={categoryRef}
               data-project-category
-              className="inline-block"
+              className="font-(family-name:--font-montserrat) inline-block"
             >
-              {project.category}
+              {project.time}
             </span>
             <span className="pointer-events-none absolute right-0 bottom-0 block w-10">
               <span
@@ -240,14 +240,14 @@ export function ProjectRow({ project }: { project: Project }) {
           </div>
 
           <div className="col-span-2 flex justify-end md:hidden">
-            <span className="w-[16px] translate-y-[2px] text-zinc-100">
+            <span className="w-4 translate-y-0.5 text-zinc-100">
               <ArrowIcon />
             </span>
           </div>
 
-          <div className="col-span-full mt-[10px] flex items-center text-[13px] leading-[1.4] text-zinc-100 md:hidden">
+          <div className="col-span-full mt-2.5 flex items-center text-[13px] leading-[1.4] text-zinc-100 md:hidden">
             <span className="whitespace-nowrap text-zinc-100">
-              {project.category}
+              {project.time}
             </span>
             <span className="mx-[0.6em] text-zinc-100">•</span>
             <ul>
@@ -265,7 +265,7 @@ export function ProjectRow({ project }: { project: Project }) {
           <div
             ref={underlineRef}
             data-project-underline
-            className="col-span-full mt-[20px] h-[4px] bg-zinc-100 md:mt-[38px]"
+            className="col-span-full mt-5 h-1 bg-zinc-100 md:mt-9.5"
             style={{ transform: "scaleY(0.5)", transformOrigin: "bottom" }}
           />
         </div>

@@ -209,7 +209,7 @@ function CopyEmailButton({ email }: { email: string }) {
         >
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 left-0 z-[1] h-1 w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
+            className="pointer-events-none absolute bottom-0 left-0 z-1 h-1 w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
           />
 
           <span
@@ -255,7 +255,7 @@ function ResumeLink() {
         <span className="relative inline-grid">
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 left-0 z-[1] h-1 w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
+            className="pointer-events-none absolute bottom-0 left-0 z-1 h-1 w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
           />
           Résumé
         </span>
@@ -343,7 +343,7 @@ function VersionHistoryModal({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-6 backdrop-blur-md"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 p-6 backdrop-blur-md"
     >
       <div
         ref={panelRef}
