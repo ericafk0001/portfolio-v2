@@ -2,7 +2,7 @@
 title: How I rebuilt my portfolio website
 description: A potential guide to building your own portfolio site from scratch!
 date: 2026-11-22
-readTime: 8
+readTime: 1
 tags:
   - web development
   - ui/ux
