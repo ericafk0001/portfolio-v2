@@ -36,13 +36,6 @@ export default function AboutPage() {
             aria-labelledby="about-heading"
             className="flex w-full flex-col lg:w-[45%] lg:max-w-172 lg:pt-28"
           >
-            <p
-              data-intro="right"
-              className="text-[0.8rem] tracking-[0.02em] text-zinc-500"
-            >
-              Eric Lin — EST 2010
-            </p>
-
             <h1
               id="about-heading"
               data-intro="right"
